@@ -6,16 +6,18 @@ import FoodPage from "./pages/Food/foodPage";
 import CartPage from "./pages/Cart/CartPage";
 import LoginPage from "./pages/Login/LoginPage";
 import AdminDashboard from "./Admin/AdminDashboard";
+import RestaurantPage from "./Admin/Pages/RestaurantPage/RestaurantPage";
 
 export default function AppRoutes() {
   return (
     <Routes>
       <Route path="/" element={<HomePage />} />
       <Route path="/menu/:restaurantId" element={<MenuPage />} />
-      <Route path="/food/:id" element={<FoodPage />} />
       <Route path="/cart" element={<CartPage />} />
       <Route path="/login" element={<LoginPage />} />
-      <Route path="/admin" element={<AdminDashboard />} />
+      <Route path="/admin/*" element={<AdminDashboard />} />
+      <Route path="/restaurants" element={<RestaurantPage />} />
+      <Route path="/foods" element={<FoodPage />} />
     </Routes>
   );
 }

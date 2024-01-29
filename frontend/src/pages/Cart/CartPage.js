@@ -8,10 +8,6 @@ export default function CartPage() {
   const { cart, removeFromCart, changeQuantity } = useCart();
 
   return (
-    // <div>
-    //   <h1>{cart.items.length}</h1>
-    // </div>
-
     <>
       <Title title="Cart Page" margin="1.5rem 0 0 2.5rem" />
       {cart && cart.items.length > 0 && (
@@ -20,10 +16,7 @@ export default function CartPage() {
             {cart.items.map((item) => (
               <li key={item.food.id}>
                 <div>
-                  <img
-                    src={`/images/${item.food.imageUrl}`}
-                    alt={item.food.name}
-                  />
+                  <img src={`${item.food.imageUrl}`} alt={item.food.name} />
                 </div>
                 <div>
                   <p>{item.food.name}</p>
@@ -66,7 +59,7 @@ export default function CartPage() {
           <div className={classes.checkout}>
             <div>
               <div className={classes.foods_count}>{cart.totalCount}</div>
-              <div className={classes.total_price}>{cart.totalPrice}</div>
+              <div className={classes.total_price}>RS {cart.totalPrice}</div>
             </div>
             <Link to="/checkout">Proceed To Checkout</Link>
           </div>

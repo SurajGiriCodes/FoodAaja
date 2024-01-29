@@ -29,7 +29,6 @@
 }
 
 .content {
-  margin-top: 0.3rem;
   padding: 0.5rem 1rem;
   position: relative;
   height: 7rem;
@@ -46,10 +45,6 @@
   color: grey;
 }
 
-.stars {
-  margin: 0.5rem 0;
-}
-
 .product_item_footer {
   display: flex;
   justify-content: space-between;
@@ -62,9 +57,6 @@
   display: inline-block;
   font-size: 0.8rem;
   color: grey;
-  margin-right: 0.3rem;
-  padding: 0 0.5rem;
-  margin-top: 0.2rem;
 }
 
 .origins {
@@ -86,4 +78,15 @@
   color: #414141;
   margin-top: 0.7rem;
   font-size: 1.1rem;
+}
+
+.buttonContainer {
+  margin-bottom: -20px;
+}
+
+/* Example of a media query for screen widths of 600px or less */
+@media (max-width: 1200px) {
+  .buttonContainer {
+    margin-bottom: -15px;
+  }
 }

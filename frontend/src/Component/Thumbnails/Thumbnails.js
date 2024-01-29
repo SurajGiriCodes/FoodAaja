@@ -11,7 +11,7 @@ export default function Thumbnails({ restaurant }) {
           <Link to={`/menu/${restaurant.id}`}>
             <img
               className={classes.image}
-              src={`${restaurant.imageUrl}`}
+              src={restaurant.restaurantImageUrl}
               alt={restaurant.name}
             />
 

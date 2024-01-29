@@ -19,11 +19,6 @@ export default function LoginPage() {
   const [params] = useSearchParams();
   const returnUrl = params.get("returnUrl"); //getting query string
 
-  // useEffect(() => {
-  //   if (!user) return;
-  //   returnUrl ? navigate(returnUrl) : navigate("/"); //if user have value then we should not stay in login page, here if we donot have returnUrl then nagivate returnUrl otherwise "/"
-  // }, [user]);
-
   useEffect(() => {
     if (!user) return;
     if (user.isAdmin) {
