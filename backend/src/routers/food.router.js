@@ -93,4 +93,76 @@ router.put("/:restaurantId", async (req, res) => {
   }
 });
 
+// Route to add a food item to a restaurant's menu
+router.post("/:restaurantId/menu", async (req, res) => {
+  try {
+    const { restaurantId } = req.params;
+    const foodItem = req.body;
+
+    // Find the restaurant and update its menu
+    const updatedRestaurant = await RestaurantModel.findByIdAndUpdate(
+      restaurantId,
+      { $push: { menu: foodItem } },
+      { new: true } // Return the updated document
+    );
+
+    if (updatedRestaurant) {
+      res.status(200).json(updatedRestaurant);
+    } else {
+      res.status(404).json({ error: "Restaurant not found" });
+    }
+  } catch (error) {
+    console.error("Error adding food item to restaurant:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+// Route to delete a food item from a restaurant's menu
+router.delete("/:restaurantId/menu/:foodId", async (req, res) => {
+  try {
+    const { restaurantId, foodId } = req.params;
+    // Find the restaurant and remove the food item from its menu
+    const updatedRestaurant = await RestaurantModel.findByIdAndUpdate(
+      restaurantId,
+      { $pull: { menu: { _id: foodId } } },
+      { new: true } // Return the updated document
+    );
+
+    if (updatedRestaurant) {
+      res.status(200).json(updatedRestaurant);
+    } else {
+      res.status(404).json({ error: "Restaurant or food item not found" });
+    }
+  } catch (error) {
+    console.error("Error deleting food item from restaurant:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+// Route to update a food item in a restaurant's menu
+router.put("/:restaurantId/menu/:foodId", async (req, res) => {
+  try {
+    const { restaurantId, foodId } = req.params;
+    const updatedFoodData = req.body;
+
+    // Find the restaurant and update the specific food item in its menu
+    const updatedRestaurant = await RestaurantModel.findOneAndUpdate(
+      { _id: restaurantId, "menu._id": foodId },
+      {
+        $set: { "menu.$": updatedFoodData },
+      },
+      { new: true }
+    );
+
+    if (updatedRestaurant) {
+      res.status(200).json(updatedRestaurant);
+    } else {
+      res.status(404).json({ error: "Restaurant or food item not found" });
+    }
+  } catch (error) {
+    console.error("Error updating food item in restaurant:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
 export default router;

@@ -1,16 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import StarRating from "../../../Component/StarRating/StarRating";
-import classes from "../../../Component/Thumbnails/thumbnails.module.css";
+import StarRating from "../../Component/StarRating/StarRating";
+import classes from "../../Component/Thumbnails/thumbnails.module.css";
 import { Modal, Button, Form, Input, notification } from "antd";
-import { getAll } from "../../../services/foodService";
+import { getAll } from "../../services/foodService";
+import { useNavigate } from "react-router-dom";
 import {
   createRestaurant,
   deleteRestaurant,
   updateRestaurant,
-} from "../../../services/foodService";
+} from "../../services/foodService";
 
-export default function AdminThumbnails() {
+export default function AdminThumbnailsComponent() {
   const [restaurant, setRestaurant] = useState([]);
   const [selectedRestaurant, setSelectedRestaurant] = useState(null);
 
@@ -103,6 +104,14 @@ export default function AdminThumbnails() {
       });
     }
   };
+
+  const navigate = useNavigate();
+
+  // Function to handle navigation to the admin menu
+  const goToAdminMenu = (restaurantId) => {
+    navigate(`/adminMenu/${restaurantId}`);
+  };
+
   return (
     <>
       <div style={{ textAlign: "right" }}>
@@ -112,8 +121,11 @@ export default function AdminThumbnails() {
       </div>
       <ul className={classes.list}>
         {restaurant.map((restaurant) => (
-          <li key={restaurant._id}>
-            <Link to={`/admin/menu/${restaurant._id}`}>
+          <li key={restaurant.id}>
+            <div
+              onClick={() => goToAdminMenu(restaurant.id)}
+              className={classes.clickableArea}
+            >
               <img
                 className={classes.image}
                 src={restaurant.restaurantImageUrl}
@@ -147,7 +159,10 @@ export default function AdminThumbnails() {
                     <Button
                       type="primary"
                       size="small"
-                      onClick={() => showEditModal(restaurant)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        showEditModal(restaurant);
+                      }}
                     >
                       Edit Restaurant
                     </Button>
@@ -167,22 +182,25 @@ export default function AdminThumbnails() {
                       type="primary"
                       danger
                       size="small"
-                      onClick={() => handleRemove(restaurant._id)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleRemove(restaurant._id);
+                      }}
                     >
                       Delete Restaurant
                     </Button>
                   </div>
                 </div>
               </div>
-            </Link>
+            </div>
           </li>
         ))}
       </ul>
 
       {/* Modal Form */}
       <Modal
-        title="Add Restaurant"
-        visible={isModalVisible}
+        title={selectedRestaurant ? "Edit Restaurant" : "Add Restaurant"}
+        open={isModalVisible}
         onCancel={handleCancel}
         closable={false}
         footer={null}

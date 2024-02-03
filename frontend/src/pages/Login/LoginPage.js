@@ -19,15 +19,6 @@ export default function LoginPage() {
   const [params] = useSearchParams();
   const returnUrl = params.get("returnUrl"); //getting query string
 
-  useEffect(() => {
-    if (!user) return;
-    if (user.isAdmin) {
-      navigate("/admin");
-    } else {
-      returnUrl ? navigate(returnUrl) : navigate("/");
-    }
-  }, [user]);
-
   const submit = async ({ email, password }) => {
     await login(email, password);
   };

@@ -61,3 +61,64 @@ export const updateRestaurant = async (restaurantId, updatedData) => {
     throw error;
   }
 };
+
+// Function to add a food item to a specific restaurant's menu
+export const addFoodToRestaurant = async (restaurantId, foodData) => {
+  try {
+    // Make a POST request to add the food item to the specified restaurant
+    const { data } = await axios.post(
+      `/api/restaurants/${restaurantId}/menu`,
+      foodData,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    console.log("Food item added successfully", data);
+    return data;
+  } catch (error) {
+    console.error("Error adding food item to restaurant:", error.message);
+    throw error;
+  }
+};
+
+// Function to delete a food item from a specific restaurant's menu
+export const deleteFoodFromRestaurant = async (restaurantId, foodId) => {
+  try {
+    // Make a DELETE request to remove the food item from the specified restaurant
+    const response = await axios.delete(
+      `/api/restaurants/${restaurantId}/menu/${foodId}`
+    );
+    console.log("Food item deleted successfully", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Error deleting food item from restaurant:", error.message);
+    throw error;
+  }
+};
+
+// Function to update a food item in a specific restaurant's menu
+export const updateFoodInRestaurant = async (
+  restaurantId,
+  foodId,
+  updatedFoodData
+) => {
+  try {
+    // Make a PUT request to update the food item in the specified restaurant
+    const response = await axios.put(
+      `/api/restaurants/${restaurantId}/menu/${foodId}`,
+      updatedFoodData,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    console.log("Food item updated successfully", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Error updating food item in restaurant:", error.message);
+    throw error;
+  }
+};

@@ -5,19 +5,25 @@ import MenuPage from "./pages/Menu/MenuPage";
 import FoodPage from "./pages/Food/foodPage";
 import CartPage from "./pages/Cart/CartPage";
 import LoginPage from "./pages/Login/LoginPage";
-import AdminDashboard from "./Admin/AdminDashboard";
-import RestaurantPage from "./Admin/Pages/RestaurantPage/RestaurantPage";
+import RestaurantPageAdmin from "./pages/Admin/RestaurantPageAdmin";
+import MenuPageAdmin from "./pages/Admin/MenuPageAdmin";
+import { useAuth } from "./hooks/useAuth";
 
 export default function AppRoutes() {
+  const { user } = useAuth(); // Get the user object from the useAuth hook
+  const isAdmin = user && user.isAdmin;
   return (
     <Routes>
-      <Route path="/" element={<HomePage />} />
+      <Route
+        path="/"
+        element={isAdmin ? <RestaurantPageAdmin /> : <HomePage />}
+      />
       <Route path="/menu/:restaurantId" element={<MenuPage />} />
       <Route path="/cart" element={<CartPage />} />
       <Route path="/login" element={<LoginPage />} />
-      <Route path="/admin/*" element={<AdminDashboard />} />
-      <Route path="/restaurants" element={<RestaurantPage />} />
-      <Route path="/foods" element={<FoodPage />} />
+      <Route path="/restaurants" element={<RestaurantPageAdmin />} />
+      <Route path="/adminMenu/:restaurantId" element={<MenuPageAdmin />} />
+      <Route path="/food" element={<FoodPage />} />
     </Routes>
   );
 }

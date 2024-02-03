@@ -4,7 +4,6 @@ import { AppstoreOutlined, PieChartOutlined } from "@ant-design/icons";
 import { useAuth } from "../hooks/useAuth";
 import { Link, useNavigate } from "react-router-dom";
 import RestaurantPage from "./Pages/RestaurantPage/RestaurantPage";
-import OrderPage from "./Pages/OrderPgae/orderPage";
 export default function AdminDashboard() {
   const { logout } = useAuth();
   const [selectedMenuItem, setSelectedMenuItem] = useState("restaurants");
@@ -49,7 +48,6 @@ export default function AdminDashboard() {
           >
             Admin Dashboard
           </Menu.Item>
-
           <Menu.Item
             key="restaurants"
             label="Restaurants"
@@ -77,7 +75,6 @@ export default function AdminDashboard() {
         style={{ marginLeft: 256, padding: "20px", flex: 1, overflowY: "auto" }}
       >
         {selectedMenuItem === "restaurants" && <RestaurantPage />}
-        {selectedMenuItem === "orders" && <OrderPage />}
       </div>
     </div>
   );

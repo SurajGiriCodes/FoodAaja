@@ -9,32 +9,34 @@ export const AuthProvider = ({ children }) => {
   const navigate = useNavigate();
   const [user, setUser] = useState(userService.getUser()); // retrieves the user's data from local storage or sets it to null if the user is not authenticated.
 
+  // Determine if the user is an admin
+  const isAdmin = user && user.isAdmin;
+
   const login = async (email, password) => {
     try {
       const user = await userService.login(email, password); //This function presumably sends a request to a server for user authentication.
       setUser(user);
       toast.success("Login Successful");
+      if (user.isAdmin) {
+        navigate("/restaurants");
+      } else {
+        navigate("/");
+      }
     } catch (err) {
-      toast.error(err.response.data);
+      toast.error(err.response?.data || "An error occurred during login");
     }
   };
 
   const logout = () => {
     userService.logout();
     setUser(null);
-
-    // Redirect to /login if the user was an admin
-    if (user?.isAdmin) {
-      navigate("/login");
-    }
-
+    localStorage.removeItem("accessToken");
+    navigate("/login"); // Redirect to login after logout
     toast.success("Logout Successful");
   };
 
   return (
-    <AuthContext.Provider
-      value={{ user, isAdmin: user?.isAdmin, login, logout }}
-    >
+    <AuthContext.Provider value={{ user, isAdmin, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
