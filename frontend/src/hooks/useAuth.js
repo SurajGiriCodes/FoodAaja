@@ -9,7 +9,6 @@ export const AuthProvider = ({ children }) => {
   const navigate = useNavigate();
   const [user, setUser] = useState(userService.getUser()); // retrieves the user's data from local storage or sets it to null if the user is not authenticated.
 
-  // Determine if the user is an admin
   const isAdmin = user && user.isAdmin;
 
   const login = async (email, password) => {
@@ -27,6 +26,16 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  const register = async (data) => {
+    try {
+      const user = await userService.register(data);
+      setUser(user);
+      toast.success("Register Sucessful");
+    } catch (err) {
+      toast.error(err.response.data);
+    }
+  };
+
   const logout = () => {
     userService.logout();
     setUser(null);
@@ -36,7 +45,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, isAdmin, login, logout }}>
+    <AuthContext.Provider value={{ user, isAdmin, login, logout, register }}>
       {children}
     </AuthContext.Provider>
   );

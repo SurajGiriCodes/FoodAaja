@@ -8,6 +8,7 @@ import LoginPage from "./pages/Login/LoginPage";
 import RestaurantPageAdmin from "./pages/Admin/RestaurantPageAdmin";
 import MenuPageAdmin from "./pages/Admin/MenuPageAdmin";
 import { useAuth } from "./hooks/useAuth";
+import RegisterPage from "./pages/Register/RegisterPage";
 
 export default function AppRoutes() {
   const { user } = useAuth(); // Get the user object from the useAuth hook
@@ -24,6 +25,7 @@ export default function AppRoutes() {
       <Route path="/restaurants" element={<RestaurantPageAdmin />} />
       <Route path="/adminMenu/:restaurantId" element={<MenuPageAdmin />} />
       <Route path="/food" element={<FoodPage />} />
+      <Route path="/register" element={<RegisterPage />} />
     </Routes>
   );
 }

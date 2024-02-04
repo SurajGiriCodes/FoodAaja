@@ -11,6 +11,12 @@ export const login = async (email, password) => {
   return data; //data received from the server (which may include user information or a token) is returned from the login function  This JSON string is then stored in the browser's localStorage with the key 'user'.
 };
 
+export const register = async (registerData) => {
+  const { data } = await axios.post("api/users/register", registerData);
+  localStorage.setItem("user", JSON.stringify(data));
+  return data;
+};
+
 export const logout = () => {
   localStorage.removeItem("user");
 };

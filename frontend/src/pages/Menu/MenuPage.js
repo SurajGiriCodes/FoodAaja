@@ -5,7 +5,6 @@ import { getByID } from "../../services/foodService";
 import classes from "./menu.module.css";
 import { useCart } from "../../hooks/useCart";
 
-
 export default function MenuPage() {
   const [resmenu, setResMenu] = useState({});
   const { restaurantId } = useParams();
@@ -17,14 +16,12 @@ export default function MenuPage() {
     navigate("/cart");
   };
 
-
   useEffect(() => {
     getByID(restaurantId).then(setResMenu);
   }, [restaurantId]);
 
   return (
     <div>
-
       {resmenu && resmenu.menu && (
         <section>
           <div className={classes.title}>
@@ -36,7 +33,7 @@ export default function MenuPage() {
             {resmenu.menu.map((food) => (
               <article key={food.id} className={classes["menu-item"]}>
                 <img
-                  src={`${food.imageUrl}`}
+                  src={`${food.menuImageUrl}`}
                   alt={food.name}
                   className={classes.imgclass}
                 />
