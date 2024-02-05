@@ -3,7 +3,6 @@ import jwt from "jsonwebtoken";
 import { BAD_REQUEST } from "../constants/httpStatus.js";
 import handler from "express-async-handler";
 import { UserModel } from "../models/user.model.js";
-
 import bcrypt from "bcryptjs";
 const PASSWORD_HASH_SALT_ROUNDS = 10;
 

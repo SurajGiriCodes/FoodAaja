@@ -9,6 +9,8 @@ import RestaurantPageAdmin from "./pages/Admin/RestaurantPageAdmin";
 import MenuPageAdmin from "./pages/Admin/MenuPageAdmin";
 import { useAuth } from "./hooks/useAuth";
 import RegisterPage from "./pages/Register/RegisterPage";
+import AuthRoute from "./Component/AuthRoute/AuthRoute";
+import CheckoutPage from "./pages/Checkout/CheckoutPage";
 
 export default function AppRoutes() {
   const { user } = useAuth(); // Get the user object from the useAuth hook
@@ -26,6 +28,14 @@ export default function AppRoutes() {
       <Route path="/adminMenu/:restaurantId" element={<MenuPageAdmin />} />
       <Route path="/food" element={<FoodPage />} />
       <Route path="/register" element={<RegisterPage />} />
+      <Route
+        path="/checkout"
+        element={
+          <AuthRoute>
+            <CheckoutPage />
+          </AuthRoute>
+        }
+      />
     </Routes>
   );
 }
