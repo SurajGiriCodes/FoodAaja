@@ -26,4 +26,19 @@ router.post(
   })
 );
 
+router.get(
+  "/newOrderForCurrentUser",
+  handler(async (req, res) => {
+    const order = await getNewOrderForCurrentUser(req);
+    if (order) res.send(order);
+    else res.status(BAD_REQUEST).send();
+  })
+);
+
+const getNewOrderForCurrentUser = async (req) =>
+  await OrderModel.findOne({
+    user: req.user.id,
+    status: OrderStatus.NEW,
+  }).populate("user");
+
 export default router;

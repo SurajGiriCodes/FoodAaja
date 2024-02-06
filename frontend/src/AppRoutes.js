@@ -11,6 +11,7 @@ import { useAuth } from "./hooks/useAuth";
 import RegisterPage from "./pages/Register/RegisterPage";
 import AuthRoute from "./Component/AuthRoute/AuthRoute";
 import CheckoutPage from "./pages/Checkout/CheckoutPage";
+import PaymentPage from "./pages/Payment/PaymentPage";
 
 export default function AppRoutes() {
   const { user } = useAuth(); // Get the user object from the useAuth hook
@@ -33,6 +34,14 @@ export default function AppRoutes() {
         element={
           <AuthRoute>
             <CheckoutPage />
+          </AuthRoute>
+        }
+      />
+      <Route
+        path="/payment"
+        element={
+          <AuthRoute>
+            <PaymentPage />
           </AuthRoute>
         }
       />
