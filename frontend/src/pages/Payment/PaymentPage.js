@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from "react";
 import classes from "./paymentPage.module.css";
-import { getNewOrderForCurrentUser } from "../../services/OrderService";
+import {
+  getNewOrderForCurrentUser,
+  initiatePayment,
+} from "../../services/OrderService"; // Import initiatePayment
 import Title from "../../Component/Title/Title";
 import OrderItemsList from "../../Component/OrderItemsList/OrderItemsList";
 import Map from "../../Component/Map/Map";
@@ -13,40 +16,25 @@ export default function PaymentPage() {
     getNewOrderForCurrentUser().then((data) => setOrder(data));
   }, []);
 
-  if (!order) return;
+  const handlePayment = async () => {
+    if (!order) return; // Check if the order exists
+    try {
+      // Assuming your order object has 'amount' and 'id' fields
+      // Convert the amount to paisa if it's in another currency unit
+      const amountInPaisa = order.amount * 100; // Example conversion, adjust as necessary
+      const paymentInitiationResponse = await initiatePayment({
+        amount: amountInPaisa,
+        orderId: order.id, // Make sure you have an orderId or similar unique identifier
+      });
+      // Redirect the user to Khalti payment page
+      window.location.href = paymentInitiationResponse.url; // Adjust according to the actual response structure
+    } catch (error) {
+      console.error("Error initiating payment:", error);
+      // Handle error (e.g., show a message to the user)
+    }
+  };
 
-  // const handlePayment = () => {
-  // //   let config = {
-  // //     // the "publicKey" is provided by Khalti
-  // //     publicKey: "Your_Khalti_Public_Key",
-  // //     productIdentity: "1234567890",
-  // //     productName: "Your Product Name",
-  // //     productUrl: "http://localhost:3000/payment",
-  // //     eventHandler: {
-  // //       onSuccess(payload) {
-  // //         // Here, you can handle what happens after successful payment
-  // //         console.log(payload);
-  // //         // Typically, you send payload to your server for verification
-  // //       },
-  // //       onError(error) {
-  // //         console.log(error);
-  // //       },
-  // //       onClose() {
-  // //         console.log("Widget is closing");
-  // //       },
-  // //     },
-  // //     paymentPreference: [
-  // //       "KHALTI",
-  // //       "EBANKING",
-  // //       "MOBILE_BANKING",
-  // //       "CONNECT_IPS",
-  // //       "SCT",
-  // //     ],
-  // //   };
-
-  // //   let checkout = new KhaltiCheckout(config);
-  // //   checkout.show({ amount: 1000 }); // amount in paisa
-  // // };
+  if (!order) return null; // or a loading spinner
 
   return (
     <>
@@ -75,12 +63,12 @@ export default function PaymentPage() {
           <div className={classes.buttons}>
             <Button
               type="primary"
+              onClick={handlePayment} // Add the click handler here
               style={{
                 width: "300px",
                 height: "50px",
                 fontSize: "20px",
               }}
-              // onClick={handlePayment}
             >
               Pay by Khalti
             </Button>
