@@ -1,9 +1,11 @@
 import { Router } from "express";
 import handler from "express-async-handler";
 import auth from "../middleware/auth.mid.js";
-import { BAD_REQUEST } from "../constants/httpStatus.js";
+import { BAD_REQUEST, UNAUTHORIZED } from "../constants/httpStatus.js";
 import { OrderModel } from "../models/order.model.js";
 import { OrderStatus } from "../constants/orderStatus.js";
+import axios from "axios";
+import { UserModel } from "../models/user.model.js";
 
 const router = Router();
 
@@ -41,18 +43,23 @@ const getNewOrderForCurrentUser = async (req) =>
     status: OrderStatus.NEW,
   }).populate("user");
 
+// Payment initiation route
 router.post(
   "/initiate-payment",
   auth,
   handler(async (req, res) => {
-    const { amount, orderId } = req.body; // Ensure amount is in paisa and you have an orderId
+    const { amount, orderId, CustomerName } = req.body; // Ensure amount is in paisa and you have an orderId
+    const returnUrl = `http://localhost:3000/track/${orderId}`;
+
     const data = {
-      return_url: "http://yourwebsite.com/payment-success",
-      website_url: "http://yourwebsite.com",
+      return_url: returnUrl,
+      website_url: "http://localhost:3000/",
       amount: amount,
       purchase_order_id: orderId,
       purchase_order_name: "Order Payment",
-      // Add other fields as required by Khalti
+      customer_info: {
+        name: CustomerName,
+      },
     };
 
     try {
@@ -61,12 +68,13 @@ router.post(
         data,
         {
           headers: {
-            Authorization: `Key ${process.env.LIVE_SECRET_KEY}`,
+            Authorization: "Key 7950ac9f1ee64e04b4ebf01aefcb33a0",
             "Content-Type": "application/json",
           },
         }
       );
-      res.json(response.data); // This should include the URL to redirect the user for payment
+
+      res.json(response.data);
     } catch (error) {
       console.error("Payment initiation failed:", error);
       res.status(500).send("Payment initiation failed");
@@ -74,37 +82,54 @@ router.post(
   })
 );
 
-// Payment initiation route
-router.post(
-  "/initiate-payment",
-  auth,
+router.put(
+  "/pay",
   handler(async (req, res) => {
-    const { amount, orderId } = req.body; // Ensure amount is in paisa and you have an orderId
-    const data = {
-      return_url: "http://localhost:3000/",
-      website_url: "http://localhost:3000/",
-      amount: amount,
-      purchase_order_id: orderId,
-      purchase_order_name: "Order Payment",
-      // Add other fields as required by Khalti
+    const { paymentId } = req.body;
+    const order = await getNewOrderForCurrentUser(req);
+    if (!order) {
+      res.status(BAD_REQUEST).send("Order Not Found!");
+      return;
+    }
+    order.paymentId = paymentId;
+    order.status = OrderStatus.PAYED;
+    await order.save();
+    res.send(order._id);
+  })
+);
+
+router.put(
+  "/cashOnDelivery",
+  handler(async (req, res) => {
+    const order = await getNewOrderForCurrentUser(req);
+    if (!order) {
+      res.status(BAD_REQUEST).send("Order Not Found!");
+      return;
+    }
+    order.status = OrderStatus.PANDING;
+    await order.save();
+    res.send(order._id);
+  })
+);
+
+router.get(
+  "/track/:orderId",
+  handler(async (req, res) => {
+    const { orderId } = req.params;
+    const user = await UserModel.findById(req.user.id);
+    const filter = {
+      _id: orderId,
     };
 
-    try {
-      const response = await axios.post(
-        "https://a.khalti.com/api/v2/epayment/initiate/",
-        data,
-        {
-          headers: {
-            Authorization: `Key ${process.env.LIVE_SECRET_KEY}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      res.json(response.data); // This should include the URL to redirect the user for payment
-    } catch (error) {
-      console.error("Payment initiation failed:", error);
-      res.status(500).send("Payment initiation failed");
+    if (!user.isAdmin) {
+      filter.user = user._id;
     }
+
+    const order = await OrderModel.findOne(filter);
+
+    if (!order) return res.send(UNAUTHORIZED);
+
+    return res.send(order);
   })
 );
 

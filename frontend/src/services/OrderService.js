@@ -14,10 +14,45 @@ export const getNewOrderForCurrentUser = async () => {
 
 export const initiatePayment = async (paymentDetails) => {
   try {
-    const { data } = await axios.post("/api/payment/initiate", paymentDetails);
-    return data; // This should include the URL to redirect the user for Khalti payment
+    const { data } = await axios.post(
+      "/api/orders/initiate-payment",
+      paymentDetails
+    );
+    return data;
   } catch (error) {
     console.error("Error initiating payment:", error);
     throw error;
   }
+};
+
+export const pay = async (paymentId) => {
+  try {
+    const { data } = await axios.put("/api/orders/pay", { paymentId });
+    return data;
+  } catch (error) {}
+};
+
+export const cashOnDelivery = async () => {
+  try {
+    const { data } = await axios.put("/api/orders/cashOnDelivery");
+    return data;
+  } catch (error) {
+    if (error.response) {
+      console.error(
+        "Server responded with error:",
+        error.response.status,
+        error.response.data
+      );
+    } else if (error.request) {
+      console.error("No response received for the request:", error.request);
+    } else {
+      console.error("Error setting up the request:", error.message);
+    }
+    throw error;
+  }
+};
+
+export const trackOrderById = async (orderId) => {
+  const { data } = await axios.get("/api/orders/track/" + orderId);
+  return data;
 };

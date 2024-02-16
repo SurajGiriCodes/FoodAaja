@@ -2,6 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import StarRating from "../StarRating/StarRating";
 import classes from "./thumbnails.module.css";
+
 export default function Thumbnails({ restaurant }) {
   return (
     <ul className={classes.list}>

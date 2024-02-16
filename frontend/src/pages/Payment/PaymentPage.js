@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import classes from "./paymentPage.module.css";
 import {
+  cashOnDelivery,
   getNewOrderForCurrentUser,
   initiatePayment,
 } from "../../services/OrderService"; // Import initiatePayment
@@ -8,39 +9,59 @@ import Title from "../../Component/Title/Title";
 import OrderItemsList from "../../Component/OrderItemsList/OrderItemsList";
 import Map from "../../Component/Map/Map";
 import { Button } from "antd";
+import { useCart } from "../../hooks/useCart";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 export default function PaymentPage() {
   const [order, setOrder] = useState();
+  const { clearCart } = useCart();
+  const navigate = useNavigate();
 
   useEffect(() => {
     getNewOrderForCurrentUser().then((data) => setOrder(data));
   }, []);
 
   const handlePayment = async () => {
-    if (!order) return; // Check if the order exists
+    if (!order) return;
     try {
-      // Assuming your order object has 'amount' and 'id' fields
-      // Convert the amount to paisa if it's in another currency unit
-      const amountInPaisa = order.amount * 100; // Example conversion, adjust as necessary
+      const amountInPaisa = order.totalPrice * 100;
       const paymentInitiationResponse = await initiatePayment({
         amount: amountInPaisa,
-        orderId: order.id, // Make sure you have an orderId or similar unique identifier
+        orderId: order.id,
+        CustomerName: order.name,
       });
-      // Redirect the user to Khalti payment page
-      window.location.href = paymentInitiationResponse.url; // Adjust according to the actual response structure
+      window.location.href = paymentInitiationResponse.payment_url;
     } catch (error) {
       console.error("Error initiating payment:", error);
-      // Handle error (e.g., show a message to the user)
+    }
+  };
+  // Handle Cash on Delivery
+  const handlePayOnDelivery = async () => {
+    if (!order) return;
+    try {
+      await cashOnDelivery();
+      clearCart();
+      navigate(`/track/${order.id}`);
+      toast.success("Order Saved Successfully", "Success");
+    } catch (error) {
+      console.error("Error processing cash on delivery:", error);
+      alert("Failed to process cash on delivery."); // Placeholder for actual error handling
     }
   };
 
-  if (!order) return null; // or a loading spinner
+  if (!order) return null;
 
   return (
     <>
       <div className={classes.container}>
         <div className={classes.content}>
-          <Title title="Order Form" fontSize="1.6rem" />
+          <Title
+            title="Order Form"
+            fontSize="1.6rem"
+            marginBottom="20px"
+            marginTop="20px"
+          />
           <div className={classes.summary}>
             <div>
               <h3>Name:</h3>
@@ -55,7 +76,12 @@ export default function PaymentPage() {
         </div>
 
         <div className={classes.map}>
-          <Title title="Your Location" fontSize="1.6rem" />
+          <Title
+            title="Your Location"
+            fontSize="1.6rem"
+            marginBottom="20px"
+            marginTop="20px"
+          />
           <Map readonly={true} location={order.addressLatLng} />
         </div>
 
@@ -71,6 +97,20 @@ export default function PaymentPage() {
               }}
             >
               Pay by Khalti
+            </Button>
+            <Button
+              type="secondary"
+              onClick={handlePayOnDelivery} // This will be your new handler for pay on delivery
+              style={{
+                width: "300px",
+                height: "50px",
+                fontSize: "20px",
+                backgroundColor: "#f0ad4e", // Example: orange background
+                color: "#ffffff", // white text
+                borderColor: "#eea236", // Example: darker orange border
+              }}
+            >
+              Cash on Delivery
             </Button>
           </div>
         </div>

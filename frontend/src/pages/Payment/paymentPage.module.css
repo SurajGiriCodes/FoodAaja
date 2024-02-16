@@ -33,6 +33,9 @@
 }
 
 .buttons {
-  margin: 2rem;
-  width: 35rem;
+  display: flex;
+  flex-direction: column; /* Stacks flex items vertically */
+  align-items: center; /* Align items in the center horizontally */
+  gap: 10px; /* Adjust the space between buttons */
+  margin-right: 250px;
 }

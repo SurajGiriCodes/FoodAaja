@@ -4,4 +4,5 @@ export const OrderStatus = {
   SHIPPED: "SHIPPED",
   CANCELED: "CANCELED",
   REFUNDED: "REFUNDED",
+  PANDING: "PANDING",
 };
