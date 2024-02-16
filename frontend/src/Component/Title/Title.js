@@ -8,7 +8,15 @@ export default function Title({
   marginTop,
 }) {
   return (
-    <h1 style={{ fontSize, margin, marginBottom, marginTop, color: "#616161" }}>
+    <h1
+      style={{
+        fontSize,
+        margin,
+        marginBottom: "20px",
+        marginTop: "20px",
+        color: "#616161",
+      }}
+    >
       {title}
     </h1>
   );
