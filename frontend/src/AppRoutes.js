@@ -14,6 +14,7 @@ import CheckoutPage from "./pages/Checkout/CheckoutPage";
 import PaymentPage from "./pages/Payment/PaymentPage";
 import OrderTrackPage from "./pages/OrderTrack/OrderTrackPage";
 import ProfilePage from "./pages/Profile/ProfilePage";
+import OrderPage from "./pages/Orders/OrderPage";
 
 export default function AppRoutes() {
   const { user } = useAuth(); // Get the user object from the useAuth hook
@@ -24,6 +25,7 @@ export default function AppRoutes() {
         path="/"
         element={isAdmin ? <RestaurantPageAdmin /> : <HomePage />}
       />
+      <Route path="/search/:searchTerm" element={<HomePage />} />
       <Route path="/menu/:restaurantId" element={<MenuPage />} />
       <Route path="/cart" element={<CartPage />} />
       <Route path="/login" element={<LoginPage />} />
@@ -60,6 +62,14 @@ export default function AppRoutes() {
         element={
           <AuthRoute>
             <ProfilePage />
+          </AuthRoute>
+        }
+      />
+      <Route
+        path="/orders/:filter?"
+        element={
+          <AuthRoute>
+            <OrderPage />
           </AuthRoute>
         }
       />

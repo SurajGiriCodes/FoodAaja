@@ -37,12 +37,6 @@ router.get(
   })
 );
 
-const getNewOrderForCurrentUser = async (req) =>
-  await OrderModel.findOne({
-    user: req.user.id,
-    status: OrderStatus.NEW,
-  }).populate("user");
-
 // Payment initiation route
 router.post(
   "/initiate-payment",
@@ -132,5 +126,32 @@ router.get(
     return res.send(order);
   })
 );
+
+router.get("/allstatus", (req, res) => {
+  const allStatus = Object.values(OrderStatus);
+  res.send(allStatus);
+});
+
+router.get(
+  "/:status?",
+  handler(async (req, res) => {
+    const status = req.params.status;
+    const user = await UserModel.findById(req.user.id);
+    const filter = {};
+
+    if (!user.isAdmin) filter.user = user._id;
+    if (status) filter.status = status;
+
+    //-createdAt it will show last order first
+    const orders = await OrderModel.find(filter).sort("-createdAt");
+    res.send(orders);
+  })
+);
+
+const getNewOrderForCurrentUser = async (req) =>
+  await OrderModel.findOne({
+    user: req.user.id,
+    status: OrderStatus.NEW,
+  }).populate("user");
 
 export default router;
