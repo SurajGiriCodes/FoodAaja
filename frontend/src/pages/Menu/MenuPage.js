@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom"; // Combined imports
 import { getByID } from "../../services/foodService";
 import classes from "./menu.module.css";
 import { useCart } from "../../hooks/useCart";
 
 export default function MenuPage() {
-  const [resmenu, setResMenu] = useState({});
+  const [resMenu, setResMenu] = useState({ menu: [] }); // Initialize resMenu with an empty menu array
+  const [filteredMenu, setFilteredMenu] = useState([]); // This will hold the filtered menu items
   const { restaurantId } = useParams();
   const { addToCart } = useCart();
   const navigate = useNavigate();
+  const [searchTerm, setSearchTerm] = useState("");
 
   const handleAddToCart = (food) => {
     addToCart(food);
@@ -17,23 +18,47 @@ export default function MenuPage() {
   };
 
   useEffect(() => {
-    getByID(restaurantId).then(setResMenu);
-  }, [restaurantId]);
+    // Fetch the restaurant's full menu
+    getByID(restaurantId).then((data) => {
+      setResMenu(data); // Assuming data has a 'menu' property
+      setFilteredMenu(data.menu); // Initially, filteredMenu shows all items
+    });
+  }, [restaurantId]); // Dependency on restaurantId only
+
+  useEffect(() => {
+    // Filter the menu based on the search term
+    if (searchTerm.trim()) {
+      setFilteredMenu(
+        resMenu.menu.filter((food) =>
+          food.name.toLowerCase().includes(searchTerm.toLowerCase())
+        )
+      );
+    } else {
+      setFilteredMenu(resMenu.menu);
+    }
+  }, [searchTerm, resMenu.menu]); // Dependencies on searchTerm and resMenu.menu
 
   return (
     <div>
-      {resmenu && resmenu.menu && (
+      <input
+        type="text"
+        placeholder="Search menu items"
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+        className={classes.searchInput}
+      />
+      {filteredMenu.length > 0 && (
         <section>
           <div className={classes.title}>
-            <h1 className={classes.restrurent}>{resmenu.name}</h1>
+            <h1 className={classes.restrurent}>{resMenu.name}</h1>
             <h2 className={classes.menuTitle}>Menu</h2>
             <div className={classes.underline}></div>
           </div>
           <div className={classes["section-center"]}>
-            {resmenu.menu.map((food) => (
+            {filteredMenu.map((food) => (
               <article key={food.id} className={classes["menu-item"]}>
                 <img
-                  src={`${food.menuImageUrl}`}
+                  src={food.menuImageUrl}
                   alt={food.name}
                   className={classes.imgclass}
                 />

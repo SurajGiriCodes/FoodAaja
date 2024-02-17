@@ -5,6 +5,11 @@ export const getAll = async () => {
   return data;
 };
 
+export const search = async (searchTerm) => {
+  const { data } = await axios.get("/api/restaurants/search/" + searchTerm);
+  return data;
+};
+
 export const getByID = async (restaurantId) => {
   try {
     // Make a GET request to fetch the restaurant data including menu items
@@ -18,6 +23,18 @@ export const getByID = async (restaurantId) => {
       throw new Error("An error occurred while fetching restaurant details.");
     }
   }
+};
+
+// Inside your foodService.js or a similar service file
+
+export const searchMenuItems = (restaurantId, searchTerm) => {
+  return fetch(
+    `/api/restaurants/${restaurantId}/menu/search/${encodeURIComponent(
+      searchTerm
+    )}`
+  )
+    .then((response) => response.json())
+    .then((data) => data.menu);
 };
 
 //ADD RESTUARENT

@@ -165,4 +165,38 @@ router.put("/:restaurantId/menu/:foodId", async (req, res) => {
   }
 });
 
+router.get(
+  "/search/:searchTerm",
+  handler(async (req, res) => {
+    const { searchTerm } = req.params;
+    const searchRegex = new RegExp(searchTerm, "i");
+
+    const restaurents = await RestaurantModel.find({
+      name: { $regex: searchRegex },
+    });
+    res.send(restaurents);
+  })
+);
+
+// Route to search food items within a specific restaurant
+router.get(
+  "/:restaurantId/menu/search/:searchTerm",
+  handler(async (req, res) => {
+    const { restaurantId, searchTerm } = req.params;
+    const searchRegex = new RegExp(searchTerm, "i"); // Case-insensitive regex for searching
+
+    const restaurant = await RestaurantModel.findById(restaurantId);
+    if (!restaurant) {
+      res.status(404).json({ error: "Restaurant not found" });
+      return;
+    }
+
+    // Filter the menu based on the search term
+    const filteredMenu = restaurant.menu.filter((item) =>
+      searchRegex.test(item.name)
+    );
+    res.json({ menu: filteredMenu });
+  })
+);
+
 export default router;
