@@ -199,4 +199,21 @@ router.get(
   })
 );
 
+// Add this endpoint in your restaurant or menu routes file
+router.get("/api/restaurants/:restaurantId/tags", async (req, res) => {
+  const { restaurantId } = req.params;
+  try {
+    const restaurant = await RestaurantModel.findById(restaurantId);
+    const tags = new Set(); // Use a Set to ensure uniqueness
+    restaurant.menu.forEach((item) => {
+      item.tags.forEach((tag) => {
+        tags.add(tag);
+      });
+    });
+    res.json([...tags]); // Convert Set back to Array
+  } catch (error) {
+    res.status(500).send(error);
+  }
+});
+
 export default router;

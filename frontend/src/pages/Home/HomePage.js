@@ -3,15 +3,19 @@ import { getAll, search } from "../../services/foodService";
 import Thumbnails from "../../Component/Thumbnails/Thumbnails";
 import { useParams } from "react-router-dom";
 import Search from "../Search/Search";
+import NotFound from "../../Component/NotFound/NotFound";
 
 const initialState = {
   restaurant: [],
+  tags: [],
 };
 
 const reducer = (state, action) => {
   switch (action.type) {
     case "RESTAURANT_LOADED":
       return { ...state, restaurant: action.payload }; // the reducer creates a new state object by spreading the current state ({...state}) and updating the restaurant property with the data contained in action.payload.
+    case "TAGS_LOADED":
+      return { ...state, tags: action.payload };
     default:
       return state;
   }
@@ -32,6 +36,7 @@ export default function HomePage() {
   return (
     <>
       <Search />
+      {restaurant.length === 0 && <NotFound linkText="Reset Search" />}
       <Thumbnails restaurant={restaurant} />
     </>
   );

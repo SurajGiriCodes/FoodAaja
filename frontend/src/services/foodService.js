@@ -139,3 +139,14 @@ export const updateFoodInRestaurant = async (
     throw error;
   }
 };
+
+export const getAllTags = async () => {
+  const { data } = await axios.get("/api/foods/tags");
+  return data;
+};
+
+export const getAllByTag = async (tag) => {
+  if (tag === "All") return getAll();
+  const { data } = await axios.get("/api/foods/tag/" + tag);
+  return data;
+};
