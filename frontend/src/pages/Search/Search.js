@@ -33,8 +33,11 @@ export default function Search({
         onChange={(e) => setTerm(e.target.value)}
         onKeyUp={(e) => e.key === "Enter" && search()}
         value={term}
+        style={{ marginTop: "50px" }}
       />
-      <button onClick={search}>Search</button>
+      <button onClick={search} style={{ marginTop: "50px" }}>
+        Search
+      </button>
     </div>
   );
 }

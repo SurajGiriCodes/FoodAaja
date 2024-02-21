@@ -148,6 +148,23 @@ router.get(
   })
 );
 
+// Example in your restaurant route file
+router.get("/filtered", async (req, res) => {
+  const { maxPrice } = req.query; // Assuming filtering based on maximum price
+  const restaurants = await RestaurantModel.find({})
+    .populate({
+      path: "menu",
+      match: { price: { $lte: maxPrice } },
+    })
+    .exec();
+
+  // Filter out restaurants with no menu items within the price range
+  const filteredRestaurants = restaurants.filter(
+    (restaurant) => restaurant.menu.length > 0
+  );
+  res.json(filteredRestaurants);
+});
+
 const getNewOrderForCurrentUser = async (req) =>
   await OrderModel.findOne({
     user: req.user.id,

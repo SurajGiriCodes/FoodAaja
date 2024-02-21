@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router-dom"; // Combined imports
 import { getByID } from "../../services/foodService";
 import classes from "./menu.module.css";
 import { useCart } from "../../hooks/useCart";
+import { Modal, Button } from "antd";
 
 export default function MenuPage({ margin }) {
   const [resMenu, setResMenu] = useState({ menu: [] }); // Initialize resMenu with an empty menu array
@@ -13,6 +14,14 @@ export default function MenuPage({ margin }) {
   const [searchTerm, setSearchTerm] = useState("");
   const [tags, setTags] = useState([]);
   const [selectedTag, setSelectedTag] = useState("All");
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [selectedBudgetRanges, setSelectedBudgetRanges] = useState({
+    "100-200": false,
+    "200-300": false,
+    "300-400": false,
+    "400-500": false,
+    "500-600": false,
+  });
 
   const handleAddToCart = (food) => {
     addToCart(food);
@@ -62,9 +71,58 @@ export default function MenuPage({ margin }) {
     setSelectedTag(tag); // Directly set the selected tag
   };
 
+  const handleBudgetRangeChange = (selectedRange) => {
+    setSelectedBudgetRanges((prevRanges) => {
+      // Create a new object where all ranges are set to false
+      const newRanges = Object.keys(prevRanges).reduce((acc, range) => {
+        acc[range] = false;
+        return acc;
+      }, {});
+
+      // Set the selected range to true, if it was previously false, the entire state is reset each time, but the newly clicked checkbox will be checked if it was previously unchecked.
+      if (!prevRanges[selectedRange]) {
+        newRanges[selectedRange] = true;
+      }
+
+      return newRanges;
+    });
+  };
+
+  useEffect(() => {
+    let filtered = resMenu.menu.filter((food) => {
+      // Existing filters based on searchTerm and selectedTag
+      const matchesSearchAndTag = searchTerm.trim()
+        ? food.name.toLowerCase().includes(searchTerm.toLowerCase())
+        : true;
+      const matchesTag =
+        selectedTag !== "All"
+          ? food.tags && food.tags.includes(selectedTag)
+          : true;
+
+      // New filter based on selected budget ranges
+      const price = food.price; // Assuming food.price is a number
+      const matchesBudgetRange = Object.entries(selectedBudgetRanges).some(
+        ([range, isChecked]) => {
+          if (!isChecked) return false;
+          const [min, max] = range.split("-").map(Number);
+          return price >= min && price <= max;
+        }
+      );
+
+      return (
+        matchesSearchAndTag &&
+        matchesTag &&
+        (matchesBudgetRange ||
+          Object.values(selectedBudgetRanges).every((isChecked) => !isChecked))
+      );
+    });
+
+    setFilteredMenu(filtered);
+  }, [searchTerm, selectedTag, resMenu.menu, selectedBudgetRanges]); // Add selectedBudgetRanges to the dependency array
+
   return (
-    <div>
-      <section>
+    <div className={classes.mainContainer}>
+      <section className={classes.menuSection}>
         <div className={classes.title}>
           <h1 className={classes.restrurent}>{resMenu.name}</h1>
           <h2 className={classes.menuTitle}>Menu</h2>
@@ -118,6 +176,7 @@ export default function MenuPage({ margin }) {
             </span>
           ))}
         </div>
+
         <div className={classes["section-center"]}>
           {filteredMenu.length > 0 ? (
             filteredMenu.map((food) => (
@@ -144,6 +203,52 @@ export default function MenuPage({ margin }) {
           )}
         </div>
       </section>
+
+      <aside className={classes.budgetFilterContainer}>
+        <h3>Budget Range</h3>
+        {Object.keys(selectedBudgetRanges).map((range) => (
+          <div key={range}>
+            <input
+              type="checkbox"
+              id={range}
+              checked={selectedBudgetRanges[range]}
+              onChange={() => {
+                handleBudgetRangeChange(range);
+                setIsModalVisible(false); // Close modal when a range is selected
+              }}
+            />
+            <label htmlFor={range}>{range}</label>
+          </div>
+        ))}
+      </aside>
+      <Button
+        className={classes.showFilterButton}
+        onClick={() => setIsModalVisible(true)}
+      >
+        Show Budget Filter
+      </Button>
+      <Modal
+        title="Budget Range"
+        visible={isModalVisible}
+        onOk={() => setIsModalVisible(false)}
+        onCancel={() => setIsModalVisible(false)}
+        footer={null} // Remove default buttons
+      >
+        {Object.keys(selectedBudgetRanges).map((range) => (
+          <div key={range}>
+            <input
+              type="checkbox"
+              id={range}
+              checked={selectedBudgetRanges[range]}
+              onChange={() => {
+                handleBudgetRangeChange(range);
+                setIsModalVisible(false); // Close modal when a range is selected
+              }}
+            />
+            <label htmlFor={range}>{range}</label>
+          </div>
+        ))}
+      </Modal>
     </div>
   );
 }

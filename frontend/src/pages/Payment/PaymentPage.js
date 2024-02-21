@@ -36,6 +36,7 @@ export default function PaymentPage() {
       console.error("Error initiating payment:", error);
     }
   };
+
   // Handle Cash on Delivery
   const handlePayOnDelivery = async () => {
     if (!order) return;

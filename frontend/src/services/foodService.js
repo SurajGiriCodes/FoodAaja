@@ -140,13 +140,28 @@ export const updateFoodInRestaurant = async (
   }
 };
 
-export const getAllTags = async () => {
-  const { data } = await axios.get("/api/foods/tags");
+export const getAllTags = async (restaurantId) => {
+  const { data } = await axios.get(`/api/restaurants/${restaurantId}/tags`);
   return data;
 };
 
-export const getAllByTag = async (tag) => {
-  if (tag === "All") return getAll();
-  const { data } = await axios.get("/api/foods/tag/" + tag);
-  return data;
+export const getFilteredRestaurants = async (maxPrice) => {
+  try {
+    const response = await fetch(
+      `/api/restaurants/filtered?maxPrice=${maxPrice}`
+    );
+    // Check if the response is ok (status in the range 200–299)
+    if (!response.ok) {
+      // Throw an error with the status text, which will be caught by the catch block
+      throw new Error(`Network response was not ok: ${response.statusText}`);
+    }
+    // Here, we assume the response is valid JSON
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    // Log the error or handle it as needed
+    console.error("There has been a problem with your fetch operation:", error);
+    // Optionally, throw the error again or return a default value
+    throw error; // Or return default value, e.g., return [];
+  }
 };

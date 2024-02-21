@@ -44,6 +44,9 @@ function AdminHeader() {
             <Link to="/restaurants">Restaurants</Link>
           </Menu.Item>
           <Menu.Item key="2">
+            <Link to="/Orders">Orders</Link>
+          </Menu.Item>
+          <Menu.Item key="3">
             <a onClick={logout}>Logout</a>
           </Menu.Item>
         </Menu>

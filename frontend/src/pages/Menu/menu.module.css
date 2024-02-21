@@ -210,14 +210,46 @@ button:hover {
   background-color: #d0d0d0; /* Change to desired hover background color */
   color: #000; /* Optional: Change text color on hover if needed */
 }
-/* Add this to your menu.module.css */
-.selected {
-  background-color: blue; /* Or any color you prefer */
-  color: white; /* Adjust text color for better visibility if needed */
-  /* You can replicate other styling from your .tag class but with different colors */
-  padding: 0.3rem 1rem;
-  margin: 0.2rem;
-  border-radius: 10rem;
-  cursor: pointer;
-  transition: background-color 0.3s ease; /* Optional: Adds a smooth transition effect */
+
+.mainContainer {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 70px;
+}
+
+.menuSection {
+  flex-grow: 1;
+  margin-right: 130px;
+}
+
+.budgetFilterContainer {
+  position: fixed;
+  top: 20%;
+  right: 20px;
+  width: 200px;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background-color: white;
+  z-index: 100;
+  overflow-y: auto;
+  max-height: 60%;
+}
+
+.showFilterButton {
+  display: none; /* Hide by default */
+}
+
+@media screen and (max-width: 930px) {
+  /* Adjust based on your design */
+  .showFilterButton {
+    display: block; /* Only show on small screens */
+    margin: 10px; /* Adjust as needed */
+  }
+}
+
+@media screen and (max-width: 900px) {
+  .menuSection {
+    margin-right: 77px; /* Adjust the margin as needed */
+  }
 }

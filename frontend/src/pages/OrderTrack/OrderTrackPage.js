@@ -1,16 +1,59 @@
 import React, { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
-import { trackOrderById } from "../../services/OrderService";
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
+import { pay, trackOrderById } from "../../services/OrderService";
 import NotFound from "../../Component/NotFound/NotFound";
 import classes from "./orderTrackPage.module.css";
 import DateTime from "../../Component/DateTime/DateTime";
 import OrderItemsList from "../../Component/OrderItemsList/OrderItemsList";
 import Title from "../../Component/Title/Title";
 import Map from "../../Component/Map/Map";
+import { useCart } from "../../hooks/useCart";
+import queryString from "query-string";
+import { toast } from "react-toastify";
 
 export default function OrderTrackPage() {
   const { orderId } = useParams();
   const [order, setOrder] = useState();
+  const { clearCart } = useCart();
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  // Extract query parameters from URL
+  const queryParams = queryString.parse(location.search);
+
+  const {
+    status,
+    transaction_id,
+    amount,
+    purchase_order_id,
+    purchase_order_name,
+  } = queryParams;
+
+  React.useEffect(() => {
+    const processPayment = async () => {
+      if (status === "Completed") {
+        try {
+          const orderId = await pay(purchase_order_id);
+          clearCart();
+          toast.success("Payment Saved Successfully", "Success");
+          navigate(location.pathname, { replace: true });
+        } catch (error) {
+          toast.error("Payment processing failed", "Error");
+        }
+      }
+    };
+
+    processPayment();
+  }, [
+    status,
+    transaction_id,
+    amount,
+    purchase_order_id,
+    purchase_order_name,
+    clearCart,
+    navigate,
+    location.pathname,
+  ]);
 
   useEffect(() => {
     orderId &&

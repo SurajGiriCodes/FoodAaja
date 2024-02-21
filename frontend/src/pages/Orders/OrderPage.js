@@ -31,7 +31,6 @@ export default function OrderPage() {
       dispatch({ type: "ORDERS_FETCHED", payload: orders });
     });
   }, [filter]);
-  console.log(orders);
   return (
     <>
       <div className={classes.container}>
