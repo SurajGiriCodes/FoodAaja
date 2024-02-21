@@ -66,3 +66,13 @@ export const getAllStatus = async () => {
   const { data } = await axios.get("/api/orders/allstatus");
   return data;
 };
+
+export const getAllOrdersAdmin = async () => {
+  try {
+    const { data } = await axios.get("/api/orders");
+    return data;
+  } catch (error) {
+    console.error("Error fetching all orders:", error);
+    throw error; // Re-throw the error for handling it in the calling component
+  }
+};

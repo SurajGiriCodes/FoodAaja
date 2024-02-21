@@ -165,6 +165,27 @@ router.get("/filtered", async (req, res) => {
   res.json(filteredRestaurants);
 });
 
+router.get(
+  "/orders",
+  auth,
+  handler(async (req, res) => {
+    try {
+      const user = await UserModel.findById(req.user.id);
+      if (!user.isAdmin) {
+        return res.status(UNAUTHORIZED).send("Not authorized");
+      }
+
+      const orders = await OrderModel.find({})
+        .populate("user", "name email")
+        .sort("-createdAt");
+      res.json(orders);
+    } catch (error) {
+      console.error("Error fetching all orders:", error);
+      res.status(500).send("Internal Server Error");
+    }
+  })
+);
+
 const getNewOrderForCurrentUser = async (req) =>
   await OrderModel.findOne({
     user: req.user.id,

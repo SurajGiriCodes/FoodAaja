@@ -32,7 +32,7 @@ export default function AppRoutes() {
       <Route path="/cart" element={<CartPage />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/restaurants" element={<RestaurantPageAdmin />} />
-      <Route path="/Orders" element={<OrdersPageAdmin />} />
+      <Route path="/OrdersAdmin" element={<OrdersPageAdmin />} />
       <Route path="/adminMenu/:restaurantId" element={<MenuPageAdmin />} />
       <Route path="/food" element={<FoodPage />} />
       <Route path="/register" element={<RegisterPage />} />
