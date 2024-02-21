@@ -110,7 +110,7 @@ export default function MenuPageAdmin() {
               </Button>
             </div>
             <section>
-              <div className={classes.title}>
+              <div className={classes.title} style={{ marginBottom: "80px" }}>
                 <h1 className={classes.restrurent}>{resmenu.name}</h1>
                 <h2 className={classes.menuTitle}>Menu</h2>
                 <div className={classes.underline}></div>

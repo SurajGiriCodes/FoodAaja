@@ -114,7 +114,7 @@ export default function AdminThumbnailsComponent() {
 
   return (
     <>
-      <div style={{ textAlign: "right" }}>
+      <div style={{ textAlign: "right", marginBottom: "-30px" }}>
         <Button type="primary" onClick={showModal}>
           Add Restaurants
         </Button>

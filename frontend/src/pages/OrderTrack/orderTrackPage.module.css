@@ -40,3 +40,25 @@
   padding: 0.8rem 5rem;
   border-radius: 1rem;
 }
+
+.statusContainer {
+  display: flex;
+  align-items: center;
+  justify-content: start;
+  gap: 10px; /* Adjust the space between the status texts */
+  font-size: 1rem; /* Adjust based on your design */
+  margin-bottom: 1rem; /* Gives some space below the status line */
+}
+
+.statusLabel {
+  font-weight: bold;
+  color: #333; /* Dark grey, adjust as needed */
+}
+
+.statusValue {
+  color: #666; /* Lighter grey, adjust as needed */
+}
+
+.statusDivider {
+  color: #999; /* Even lighter grey, or choose a color that fits your design */
+}

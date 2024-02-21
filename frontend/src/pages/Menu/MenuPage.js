@@ -72,20 +72,10 @@ export default function MenuPage({ margin }) {
   };
 
   const handleBudgetRangeChange = (selectedRange) => {
-    setSelectedBudgetRanges((prevRanges) => {
-      // Create a new object where all ranges are set to false
-      const newRanges = Object.keys(prevRanges).reduce((acc, range) => {
-        acc[range] = false;
-        return acc;
-      }, {});
-
-      // Set the selected range to true, if it was previously false, the entire state is reset each time, but the newly clicked checkbox will be checked if it was previously unchecked.
-      if (!prevRanges[selectedRange]) {
-        newRanges[selectedRange] = true;
-      }
-
-      return newRanges;
-    });
+    setSelectedBudgetRanges((prevRanges) => ({
+      ...prevRanges, // Keep the existing state of all ranges
+      [selectedRange]: !prevRanges[selectedRange], // Toggle the state of the selected range
+    }));
   };
 
   useEffect(() => {
@@ -214,13 +204,32 @@ export default function MenuPage({ margin }) {
               checked={selectedBudgetRanges[range]}
               onChange={() => {
                 handleBudgetRangeChange(range);
-                setIsModalVisible(false); // Close modal when a range is selected
+                setIsModalVisible(false); // Assuming you want to keep or remove this based on your design
               }}
             />
             <label htmlFor={range}>{range}</label>
           </div>
         ))}
       </aside>
+
+      <aside className={classes.budgetFilterContainer}>
+        <h3>Budget Range</h3>
+        {Object.keys(selectedBudgetRanges).map((range) => (
+          <div key={range}>
+            <input
+              type="checkbox"
+              id={range}
+              checked={selectedBudgetRanges[range]}
+              onChange={() => {
+                handleBudgetRangeChange(range);
+                setIsModalVisible(false);
+              }}
+            />
+            <label htmlFor={range}>{range}</label>
+          </div>
+        ))}
+      </aside>
+
       <Button
         className={classes.showFilterButton}
         onClick={() => setIsModalVisible(true)}

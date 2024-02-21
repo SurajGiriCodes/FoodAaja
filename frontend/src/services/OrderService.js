@@ -76,3 +76,27 @@ export const getAllOrdersAdmin = async () => {
     throw error; // Re-throw the error for handling it in the calling component
   }
 };
+
+export const fetchDeliveryStatuses = async () => {
+  try {
+    const response = await axios.get("/api/orders/config/delivery-statuses"); // Adjust the URL as needed
+    return response.data;
+  } catch (error) {
+    console.error("Failed to fetch delivery statuses:", error);
+    throw error;
+  }
+};
+
+export const updateDeliveryStatus = async (orderId, deliveryStatus) => {
+  console.log(orderId);
+  try {
+    const response = await axios.put(
+      `/api/orders/update-delivery-status/${orderId}`,
+      { deliveryStatus }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Failed to update delivery status:", error);
+    throw error;
+  }
+};

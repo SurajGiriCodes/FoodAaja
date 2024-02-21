@@ -1,6 +1,7 @@
 import { model, Schema } from "mongoose";
 import { OrderStatus } from "../constants/orderStatus.js";
 import { FoodModel } from "./food.model.js";
+import { DeliveryStatus } from "../constants/deliveryStatus.js";
 
 export const LatLngSchema = new Schema(
   {
@@ -37,6 +38,12 @@ const orderSchema = new Schema(
     totalPrice: { type: Number, required: true },
     items: { type: [OrderItemSchema], required: true },
     status: { type: String, default: OrderStatus.NEW },
+    deliveryStatus: {
+      type: String,
+      default: DeliveryStatus.PENDING_DELIVERY,
+      enum: Object.values(DeliveryStatus),
+    },
+    user: { type: Schema.Types.ObjectId, required: true, ref: "user" },
     user: { type: Schema.Types.ObjectId, required: true, ref: "user" },
   },
   {

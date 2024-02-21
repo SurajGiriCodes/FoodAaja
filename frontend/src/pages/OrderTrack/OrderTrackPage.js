@@ -83,10 +83,20 @@ export default function OrderTrackPage() {
               <strong>Address</strong>
               {order.address}
             </div>
-            <div>
-              <strong>State</strong>
-              {order.status}
+            <div className={classes.statusContainer}>
+              <span>
+                <span className={classes.statusLabel}>Status:</span>{" "}
+                <span className={classes.statusValue}>{order.status}</span>
+              </span>
+              <span className={classes.statusDivider}>|</span>
+              <span>
+                <span className={classes.statusLabel}>Delivery:</span>{" "}
+                <span className={classes.statusValue}>
+                  {order.deliveryStatus}
+                </span>
+              </span>
             </div>
+
             {order.paymentId && (
               <div>
                 <strong>Payment ID</strong>

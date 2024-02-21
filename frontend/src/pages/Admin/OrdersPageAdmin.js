@@ -17,6 +17,7 @@ export default function OrdersPageAdmin() {
     };
     fetchOrders();
   }, []);
+  const totalRevenue = orders.reduce((acc, order) => acc + order.totalPrice, 0);
 
   const columns = [
     {
@@ -33,6 +34,18 @@ export default function OrdersPageAdmin() {
       title: "Address",
       dataIndex: "address",
       key: "address",
+    },
+    {
+      title: "Date & Time",
+      key: "createdAt",
+      dataIndex: "createdAt",
+      render: (date) => moment(date).format("YYYY-MM-DD HH:mm:ss"),
+    },
+    {
+      title: "Items",
+      key: "items",
+      dataIndex: "items",
+      render: (items) => items.map((item) => item.food.name).join(", "),
     },
     {
       title: "Total Price",
@@ -58,12 +71,6 @@ export default function OrdersPageAdmin() {
         </Tag>
       ),
     },
-    {
-      title: "Date & Time",
-      key: "createdAt",
-      dataIndex: "createdAt",
-      render: (date) => moment(date).format("YYYY-MM-DD HH:mm:ss"), // Format the date and time as desired
-    },
   ];
 
   return (
@@ -72,7 +79,18 @@ export default function OrdersPageAdmin() {
         columns={columns}
         dataSource={orders}
         rowKey="_id"
-        pagination={{ pageSize: 10 }} // Set number of items per page here
+        pagination={{
+          pageSize: 6,
+          // Other pagination settings...
+          itemRender: (current, type, originalElement) => {
+            // Only render the element if it's a page number
+            if (type === "page") {
+              return originalElement;
+            }
+            // Return nothing for 'prev' and 'next' type, effectively removing them
+            return null;
+          },
+        }}
         style={{
           marginTop: "10px",
           marginBottom: "10px",
@@ -80,6 +98,9 @@ export default function OrdersPageAdmin() {
           marginRight: "auto",
         }}
       />
+      <div style={{ marginTop: "20px" }}>
+        <h3>Total Revenue: Rs {totalRevenue.toFixed(2)}</h3>
+      </div>
     </div>
   );
 }

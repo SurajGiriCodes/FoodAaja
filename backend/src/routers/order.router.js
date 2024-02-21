@@ -6,6 +6,8 @@ import { OrderModel } from "../models/order.model.js";
 import { OrderStatus } from "../constants/orderStatus.js";
 import axios from "axios";
 import { UserModel } from "../models/user.model.js";
+import { header } from "express-validator";
+import { DeliveryStatus } from "../constants/deliveryStatus.js";
 
 const router = Router();
 
@@ -86,7 +88,7 @@ router.put(
       return;
     }
     order.paymentId = paymentId;
-    order.status = OrderStatus.PAYED;
+    order.status = OrderStatus.PAID;
     await order.save();
     res.send(order._id);
   })
@@ -100,7 +102,7 @@ router.put(
       res.status(BAD_REQUEST).send("Order Not Found!");
       return;
     }
-    order.status = OrderStatus.PANDING;
+    order.status = OrderStatus.PENDING;
     await order.save();
     res.send(order._id);
   })
@@ -185,6 +187,67 @@ router.get(
     }
   })
 );
+
+// Update the delivery status of an order
+router.post(
+  "/orders/:orderId/delivery-status",
+  auth,
+  header(async (req, res) => {
+    try {
+      const { deliveryStatus } = req.body;
+      const order = await OrderModel.findByIdAndUpdate(
+        req.params.orderId,
+        { deliveryStatus },
+        { new: true }
+      );
+      res.status(200).json(order);
+    } catch (error) {
+      res.status(500).json({
+        message: "Error updating delivery status",
+        error: error.message,
+      });
+    }
+  })
+);
+
+router.get("/config/delivery-statuses", (req, res) => {
+  res.json(DeliveryStatus);
+});
+
+// In your orders routes file (e.g., routes/orders.js)
+router.put("/update-delivery-status/:orderId", async (req, res) => {
+  try {
+    const { orderId } = req.params;
+    const { deliveryStatus } = req.body;
+
+    // First, find the current order to check its status before updating
+    const currentOrder = await OrderModel.findById(orderId);
+
+    if (!currentOrder) {
+      return res.status(404).send("Order not found");
+    }
+
+    // Check if the new delivery status is 'Delivered' and current order status is 'PENDING'
+    // If so, update the status to 'PAID'
+    const newStatus =
+      deliveryStatus === "Delivered" &&
+      currentOrder.status === OrderStatus.PENDING
+        ? OrderStatus.PAID
+        : currentOrder.status;
+
+    // Update the order in your database with the new delivery status and possibly updated order status
+    const updatedOrder = await OrderModel.findByIdAndUpdate(
+      orderId,
+      { deliveryStatus, status: newStatus },
+      { new: true } // This option returns the document after updates are applied
+    );
+
+    res.json(updatedOrder);
+  } catch (error) {
+    console.error("Failed to update delivery status:", error);
+    res.status(500).send("Internal Server Error");
+  }
+});
 
 const getNewOrderForCurrentUser = async (req) =>
   await OrderModel.findOne({
