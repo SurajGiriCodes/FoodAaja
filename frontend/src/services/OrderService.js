@@ -88,7 +88,6 @@ export const fetchDeliveryStatuses = async () => {
 };
 
 export const updateDeliveryStatus = async (orderId, deliveryStatus) => {
-  console.log(orderId);
   try {
     const response = await axios.put(
       `/api/orders/update-delivery-status/${orderId}`,

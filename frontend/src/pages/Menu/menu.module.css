@@ -17,7 +17,7 @@
 
 .title {
   text-align: center;
-  margin-top: 30px;
+
   margin-bottom: 20px;
 }
 .menuTitle {
@@ -219,21 +219,47 @@ button:hover {
 
 .menuSection {
   flex-grow: 1;
-  margin-right: 130px;
 }
 
-.budgetFilterContainer {
-  position: fixed;
-  top: 20%;
-  right: 20px;
-  width: 200px;
-  padding: 20px;
-  border: 1px solid #ccc;
+.budgetFilterContainerInsideRecommendation {
+  margin-top: 2rem; /* Space from the recommendation content */
+  padding: 1rem;
+  background-color: #f9f9f9; /* Slightly different background for distinction */
   border-radius: 8px;
-  background-color: white;
-  z-index: 100;
-  overflow-y: auto;
-  max-height: 60%;
+  border: 1px solid #e0e0e0; /* Subtle border */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Soft shadow for depth */
+}
+
+.budgetFilterContainerInsideRecommendation h4 {
+  margin-bottom: 1rem;
+  color: #333;
+  font-size: 1.2rem;
+}
+
+.budgetFilterContainerInsideRecommendation div {
+  margin-bottom: 0.5rem;
+}
+
+.budgetFilterContainerInsideRecommendation input[type="checkbox"] {
+  margin-right: 0.5rem;
+}
+
+.budgetFilterContainerInsideRecommendation label {
+  margin: 0;
+  font-size: 1rem;
+  color: #666; /* Darker text for better readability */
+  cursor: pointer; /* Indicate clickable label */
+}
+
+/* Styling for checkboxes */
+.budgetFilterContainerInsideRecommendation
+  input[type="checkbox"]:checked
+  + label {
+  color: #0056b3; /* Highlight color when checked */
+}
+
+.budgetFilterContainerInsideRecommendation input[type="checkbox"] {
+  cursor: pointer; /* Indicate clickable checkbox */
 }
 
 .showFilterButton {
@@ -246,6 +272,62 @@ button:hover {
     display: block; /* Only show on small screens */
     margin: 10px; /* Adjust as needed */
   }
+}
+
+.recommendationContainer {
+  margin-top: 2rem;
+  padding: 1.5rem;
+  background-color: #f8f8f8; /* Light grey background */
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Soft shadow for depth */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-right: 10px;
+}
+
+.singleRecommendation {
+  width: 100%; /* Adjust based on layout */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.singleRecommendation h3 {
+  margin-bottom: 1rem;
+  color: #333; /* Dark text for contrast */
+  font-size: 1.5rem; /* Large, readable font size */
+}
+
+.singleRecommendation img {
+  width: 160px; /* Adjust based on your needs */
+  height: 160px; /* Maintain aspect ratio */
+  border-radius: 10px; /* Rounded corners */
+  margin-bottom: 1rem;
+}
+
+.singleRecommendation .itemsInfo {
+  width: 80%; /* Adjust based on your layout */
+}
+
+.singleRecommendation .price {
+  font-size: 1.2rem;
+  color: #4caf50; /* Green for price to stand out */
+  margin: 0.5rem 0;
+}
+
+.singleRecommendation button {
+  font-size: 1rem;
+  padding: 10px 20px;
+  border-radius: 20px; /* More pronounced rounded corners */
+  background-color: #007bff; /* Bootstrap primary color */
+  color: white;
+  transition: background-color 0.3s ease;
+}
+
+.singleRecommendation button:hover {
+  background-color: #0056b3; /* Darker shade on hover */
 }
 
 @media screen and (max-width: 900px) {

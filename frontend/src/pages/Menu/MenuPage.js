@@ -4,6 +4,7 @@ import { getByID } from "../../services/foodService";
 import classes from "./menu.module.css";
 import { useCart } from "../../hooks/useCart";
 import { Modal, Button } from "antd";
+import getWeather from "../../services/WeatherService";
 
 export default function MenuPage({ margin }) {
   const [resMenu, setResMenu] = useState({ menu: [] }); // Initialize resMenu with an empty menu array
@@ -22,6 +23,100 @@ export default function MenuPage({ margin }) {
     "400-500": false,
     "500-600": false,
   });
+  const [currentWeather, setCurrentWeather] = useState(null);
+  const [currentTime, setCurrentTime] = useState(new Date()); // Stores the current time
+  const [recommendedItems, setRecommendedItems] = useState([]);
+
+  useEffect(() => {
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        try {
+          const weather = await getWeather(
+            position.coords.latitude,
+            position.coords.longitude
+          );
+          setCurrentWeather(weather);
+        } catch (error) {
+          console.error("Failed to fetch weather:", error);
+        }
+      },
+      (error) => {
+        console.error("Geolocation error:", error);
+      }
+    );
+  }, []);
+
+  const getTimeOfDay = () => {
+    const hour = new Date().getHours(); // Get the current hour in 24-hour format
+    if (hour < 10) return "breakfast"; // Before 10 AM
+    if (hour < 12) return "lunch"; // Between 10 AM and 12 PM
+    if (hour < 18) return "snacks"; // Between 12 PM and 6 PM
+    return "dinner"; // After 6 PM
+  };
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 60000);
+    return () => clearInterval(timer); // Clean up on component unmount
+  }, []);
+
+  const mapWeatherToCondition = (weatherData) => {
+    const temp = weatherData.main.temp; // Temperature
+    const condition = weatherData.weather[0].main; // General weather condition (Rain, Clouds, Clear, etc.)
+
+    // Map temperature to 'hot' or 'cold'
+    if (temp <= 10) {
+      return "hearty"; // Suggesting 'hearty' foods for cold temperatures
+    } else if (temp >= 25) {
+      return "refreshing"; // Suggesting 'refreshing' foods for hot temperatures
+    }
+
+    // Map specific weather conditions to categories
+    switch (condition) {
+      case "Rain":
+      case "Drizzle":
+      case "Thunderstorm":
+        return "comfort"; // Comfort foods for rainy conditions
+      case "Clouds":
+        return "bright-flavorful"; // Bright and flavorful options for overcast days
+      case "Clear":
+        return "classics"; // Classics for clear weather
+      case "Snow":
+        return "hearty"; // Hearty foods for snowy conditions
+      case "Wind":
+      case "Dust":
+      case "Fog":
+        return "easy-to-eat"; // Easy-to-eat foods for windy or poor visibility conditions
+      default:
+        return "classics"; // Default category
+    }
+  };
+
+  const updateRecommendations = () => {
+    const timeOfDay = getTimeOfDay();
+    console.log("Time of Day:", getTimeOfDay());
+    console.log("Weather Condition:", mapWeatherToCondition(currentWeather));
+
+    const weatherCondition = mapWeatherToCondition(currentWeather); // Implement based on your criteria, such as temperature and weather type
+    const newRecommendations = resMenu.menu.filter((item) => {
+      const matchesTime = item.tags.includes(timeOfDay);
+      const matchesWeather = item.category === weatherCondition;
+      return matchesTime && matchesWeather;
+    });
+
+    console.log(
+      "Recommended items based on current weather and time:",
+      newRecommendations
+    ); // Log the recommended items
+    setRecommendedItems(newRecommendations);
+  };
+
+  useEffect(() => {
+    if (resMenu.menu && currentWeather) {
+      updateRecommendations();
+    }
+  }, [resMenu.menu, currentWeather, currentTime]);
 
   const handleAddToCart = (food) => {
     addToCart(food);
@@ -194,41 +289,56 @@ export default function MenuPage({ margin }) {
         </div>
       </section>
 
-      <aside className={classes.budgetFilterContainer}>
-        <h3>Budget Range</h3>
-        {Object.keys(selectedBudgetRanges).map((range) => (
-          <div key={range}>
-            <input
-              type="checkbox"
-              id={range}
-              checked={selectedBudgetRanges[range]}
-              onChange={() => {
-                handleBudgetRangeChange(range);
-                setIsModalVisible(false); // Assuming you want to keep or remove this based on your design
-              }}
-            />
-            <label htmlFor={range}>{range}</label>
+      {/* Display Single Recommendation with Budget Range inside */}
+      <div className={classes.recommendationContainer}>
+        <h3>Recommended for You</h3>
+        {recommendedItems.length > 0 ? (
+          <div className={classes.singleRecommendation}>
+            <article className={classes.menuItem}>
+              <img
+                src={recommendedItems[0].menuImageUrl}
+                alt={recommendedItems[0].name}
+                className={classes.imgClass}
+              />
+              <div className={classes.itemsInfo}>
+                <header>
+                  <h4>{recommendedItems[0].name}</h4>
+                  <h4 className={classes.price}>
+                    RS {recommendedItems[0].price}
+                  </h4>
+                </header>
+                <p className={classes.itemText}>
+                  {recommendedItems[0].details}
+                </p>
+                <button onClick={() => handleAddToCart(recommendedItems[0])}>
+                  Add to cart
+                </button>
+              </div>
+            </article>
           </div>
-        ))}
-      </aside>
+        ) : (
+          <div>No recommendations available right now.</div>
+        )}
 
-      <aside className={classes.budgetFilterContainer}>
-        <h3>Budget Range</h3>
-        {Object.keys(selectedBudgetRanges).map((range) => (
-          <div key={range}>
-            <input
-              type="checkbox"
-              id={range}
-              checked={selectedBudgetRanges[range]}
-              onChange={() => {
-                handleBudgetRangeChange(range);
-                setIsModalVisible(false);
-              }}
-            />
-            <label htmlFor={range}>{range}</label>
-          </div>
-        ))}
-      </aside>
+        {/* Nested Budget Range inside Recommendation */}
+        <aside className={classes.budgetFilterContainerInsideRecommendation}>
+          <h4>Budget Range</h4> {/* Changed to h4 for semantic structuring */}
+          {Object.keys(selectedBudgetRanges).map((range) => (
+            <div key={range}>
+              <input
+                type="checkbox"
+                id={`inside-${range}`} // Changed to avoid duplicate IDs
+                checked={selectedBudgetRanges[range]}
+                onChange={() => {
+                  handleBudgetRangeChange(range);
+                  setIsModalVisible(false);
+                }}
+              />
+              <label htmlFor={`inside-${range}`}>{range}</label>
+            </div>
+          ))}
+        </aside>
+      </div>
 
       <Button
         className={classes.showFilterButton}
@@ -268,12 +378,12 @@ const tagStyle = {
   borderRadius: "10rem",
   cursor: "pointer",
   fontWeight: "600",
-  backgroundColor: "#f0f0f0", // default background for unselected tags
-  color: "black", // default text color
+  backgroundColor: "#f0f0f0",
+  color: "black",
 };
 
 const selectedTagStyle = {
-  ...tagStyle, // spread the default tag styles
-  backgroundColor: "blue", // background for selected tags
-  color: "white", // text color for selected tags
+  ...tagStyle,
+  backgroundColor: "blue",
+  color: "white",
 };

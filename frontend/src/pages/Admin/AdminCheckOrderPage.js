@@ -5,6 +5,7 @@ import {
   getAllOrdersAdmin,
   updateDeliveryStatus,
 } from "../../services/OrderService";
+import Title from "../../Component/Title/Title";
 
 const AdminCheckOrderPage = () => {
   const [orders, setOrders] = useState([]);
@@ -133,7 +134,13 @@ const AdminCheckOrderPage = () => {
 
   return (
     <>
-      <h2>Order Delivery Status</h2>
+      <Title
+        title="Order Delivery Status"
+        fontSize="1.6rem"
+        marginBottom="20px"
+        marginTop="20px"
+        marginLeft="40px"
+      />
       <div style={{ margin: "20px", padding: "20px" }}>
         <Table
           columns={columns}

@@ -6,6 +6,7 @@ export default function Title({
   margin,
   marginBottom,
   marginTop,
+  marginLeft,
 }) {
   return (
     <h1
@@ -15,6 +16,7 @@ export default function Title({
         marginBottom: "20px",
         marginTop: "20px",
         color: "#616161",
+        marginLeft: marginLeft,
       }}
     >
       {title}

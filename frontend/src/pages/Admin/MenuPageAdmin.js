@@ -185,8 +185,37 @@ export default function MenuPageAdmin() {
               <Option value="breakfast">Breakfast</Option>
               <Option value="lunch">Lunch</Option>
               <Option value="dinner">Dinner</Option>
+              <Option value="snacks">Snacks</Option>
             </Select>
           </Form.Item>
+
+          <Form.Item
+            label="Category"
+            name="category"
+            rules={[{ required: true }]}
+          >
+            <Select placeholder="Select a category" allowClear>
+              <Option value="hot">Hot (for cold conditions)</Option>
+              <Option value="cold">Cold (for hot conditions)</Option>
+              <Option value="comfort">
+                Comfort (for rainy/gloomy conditions)
+              </Option>
+              <Option value="refreshing">
+                Refreshing (for hot conditions)
+              </Option>
+              <Option value="hearty">Hearty (for cold conditions)</Option>
+              <Option value="easy-to-eat">
+                Easy-to-Eat (for windy conditions)
+              </Option>
+              <Option value="bright-flavorful">
+                Bright & Flavorful (for overcast conditions)
+              </Option>
+              <Option value="classics">
+                Classics (suitable for all weather)
+              </Option>
+            </Select>
+          </Form.Item>
+
           <Form.Item
             label="Details"
             name="details"
