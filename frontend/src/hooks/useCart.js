@@ -45,12 +45,17 @@ export default function CartProvider({ children }) {
     setCartItems(filteredCartItems);
   };
 
-  const changeQuantity = (cartItem, newQauntity) => {
+  const changeQuantity = (
+    cartItem,
+    newQauntity,
+    newCustomizationDetails = cartItem.customizationDetails
+  ) => {
     const { food } = cartItem;
     const changedCartItem = {
       ...cartItem,
       quantity: newQauntity,
       price: food.price * newQauntity,
+      customizationDetails: newCustomizationDetails,
     };
 
     setCartItems(
@@ -60,12 +65,27 @@ export default function CartProvider({ children }) {
     );
   };
 
-  const addToCart = (food) => {
+  const addToCart = (food, customizationDetails = "") => {
     const cartItem = cartItems.find((item) => item.food._id === food._id);
     if (cartItem) {
-      changeQuantity(cartItem, cartItem.quantity + 1);
+      // If the item already exists but new customization details are provided, update the item
+      const updatedItem = {
+        ...cartItem,
+        quantity: cartItem.quantity + 1,
+        customizationDetails:
+          customizationDetails || cartItem.customizationDetails, // Use new customization details or retain existing ones
+      };
+      setCartItems(
+        cartItems.map((item) =>
+          item.food._id === food._id ? updatedItem : item
+        )
+      );
     } else {
-      setCartItems([...cartItems, { food, quantity: 1, price: food.price }]);
+      // If the item doesn't exist, add it as a new item along with its customization details
+      setCartItems([
+        ...cartItems,
+        { food, quantity: 1, price: food.price, customizationDetails },
+      ]);
     }
   };
 

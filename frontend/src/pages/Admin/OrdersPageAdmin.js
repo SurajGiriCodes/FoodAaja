@@ -45,8 +45,24 @@ export default function OrdersPageAdmin() {
       title: "Items",
       key: "items",
       dataIndex: "items",
-      render: (items) => items.map((item) => item.food.name).join(", "),
+      render: (items) => (
+        <>
+          {items.map((item, index) => (
+            <div key={index}>
+              <p>
+                {item.food.name} - Qty: {item.quantity}
+              </p>
+              {item.customizationDetails && (
+                <p style={{ color: "blue", margin: "5px 0" }}>
+                  Customization: {item.customizationDetails}
+                </p>
+              )}
+            </div>
+          ))}
+        </>
+      ),
     },
+
     {
       title: "Total Price",
       dataIndex: "totalPrice",
@@ -54,7 +70,7 @@ export default function OrdersPageAdmin() {
       render: (text) => `Rs ${text}`,
     },
     {
-      title: "Status",
+      title: "Payment Status",
       key: "status",
       dataIndex: "status",
       render: (status) => (
@@ -69,6 +85,14 @@ export default function OrdersPageAdmin() {
         >
           {status.toUpperCase()}
         </Tag>
+      ),
+    },
+    {
+      title: "Delivery Status",
+      dataIndex: "deliveryStatus",
+      key: "deliveryStatus",
+      render: (text) => (
+        <Tag color={text === "Delivered" ? "green" : "volcano"}>{text}</Tag>
       ),
     },
   ];

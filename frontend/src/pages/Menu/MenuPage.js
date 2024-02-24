@@ -128,19 +128,23 @@ export default function MenuPage({ margin }) {
       setResMenu(data);
       setFilteredMenu(data.menu);
 
+      // Unique tags extraction and setting
       const uniqueTags = [];
       data.menu.forEach((item) => {
-        if (item.tags) {
-          item.tags.forEach((tag) => {
-            if (uniqueTags.indexOf(tag) === -1) {
-              uniqueTags.push(tag);
-            }
-          });
-        }
+        item.tags.forEach((tag) => {
+          if (!uniqueTags.includes(tag)) {
+            uniqueTags.push(tag);
+          }
+        });
       });
-      setTags(uniqueTags); // Set the unique tags into the state
+      setTags(uniqueTags);
+
+      // Update recommendations if weather data is already available
+      if (currentWeather) {
+        updateRecommendations(); // Assuming this function uses currentWeather and resMenu
+      }
     });
-  }, [restaurantId]);
+  }, [restaurantId, currentWeather]); // Add currentWeather as a dependency
 
   useEffect(() => {
     let filtered = resMenu.menu;
@@ -291,33 +295,35 @@ export default function MenuPage({ margin }) {
 
       {/* Display Single Recommendation with Budget Range inside */}
       <div className={classes.recommendationContainer}>
-        <h3>Recommended for You</h3>
         {recommendedItems.length > 0 ? (
-          <div className={classes.singleRecommendation}>
-            <article className={classes.menuItem}>
-              <img
-                src={recommendedItems[0].menuImageUrl}
-                alt={recommendedItems[0].name}
-                className={classes.imgClass}
-              />
-              <div className={classes.itemsInfo}>
-                <header>
-                  <h4>{recommendedItems[0].name}</h4>
-                  <h4 className={classes.price}>
-                    RS {recommendedItems[0].price}
-                  </h4>
-                </header>
-                <p className={classes.itemText}>
-                  {recommendedItems[0].details}
-                </p>
-                <button onClick={() => handleAddToCart(recommendedItems[0])}>
-                  Add to cart
-                </button>
-              </div>
-            </article>
-          </div>
+          <>
+            <h3>Recommended for You</h3>
+            <div className={classes.singleRecommendation}>
+              <article className={classes.menuItem}>
+                <img
+                  src={recommendedItems[0].menuImageUrl}
+                  alt={recommendedItems[0].name}
+                  className={classes.imgClass}
+                />
+                <div className={classes.itemsInfo}>
+                  <header>
+                    <h4>{recommendedItems[0].name}</h4>
+                    <h4 className={classes.price}>
+                      RS {recommendedItems[0].price}
+                    </h4>
+                  </header>
+                  <p className={classes.itemText}>
+                    {recommendedItems[0].details}
+                  </p>
+                  <button onClick={() => handleAddToCart(recommendedItems[0])}>
+                    Add to cart
+                  </button>
+                </div>
+              </article>
+            </div>
+          </>
         ) : (
-          <div>No recommendations available right now.</div>
+          <div></div>
         )}
 
         {/* Nested Budget Range inside Recommendation */}
@@ -339,7 +345,6 @@ export default function MenuPage({ margin }) {
           ))}
         </aside>
       </div>
-
       <Button
         className={classes.showFilterButton}
         onClick={() => setIsModalVisible(true)}

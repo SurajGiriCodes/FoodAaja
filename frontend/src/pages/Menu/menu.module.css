@@ -287,7 +287,7 @@ button:hover {
 }
 
 .singleRecommendation {
-  width: 100%; /* Adjust based on layout */
+  width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -296,24 +296,26 @@ button:hover {
 
 .singleRecommendation h3 {
   margin-bottom: 1rem;
-  color: #333; /* Dark text for contrast */
-  font-size: 1.5rem; /* Large, readable font size */
+  color: #333;
+  font-size: 1.5rem;
 }
 
 .singleRecommendation img {
-  width: 160px; /* Adjust based on your needs */
-  height: 160px; /* Maintain aspect ratio */
-  border-radius: 10px; /* Rounded corners */
+  width: 160px;
+  height: 160px;
+  border-radius: 10px;
   margin-bottom: 1rem;
+  margin-top: 1rem;
 }
 
 .singleRecommendation .itemsInfo {
-  width: 80%; /* Adjust based on your layout */
+  width: 80%;
+  margin-left: 1.5rem;
 }
 
 .singleRecommendation .price {
   font-size: 1.2rem;
-  color: #4caf50; /* Green for price to stand out */
+  color: #4caf50;
   margin: 0.5rem 0;
 }
 

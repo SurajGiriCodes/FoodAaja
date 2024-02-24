@@ -74,16 +74,15 @@ export default function CheckoutPage() {
               setOrder({ ...order, addressLatLng: latlng });
             }}
           />
-        </div>
-
-        <div className={classes.buttons_container}>
-          <div className={classes.buttons}>
-            <Button
-              type="submit"
-              text="Go To Payment"
-              width="100%"
-              height="3rem"
-            />
+          <div className={classes.buttons_container}>
+            <div className={classes.buttons}>
+              <Button
+                type="submit"
+                text="Go To Payment"
+                width="100%"
+                height="3rem"
+              />
+            </div>
           </div>
         </div>
       </form>

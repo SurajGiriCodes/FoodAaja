@@ -194,7 +194,7 @@ export default function MenuPageAdmin() {
             name="category"
             rules={[{ required: true }]}
           >
-            <Select placeholder="Select a category" allowClear>
+            <Select placeholder="Select a category" mode="multiple" allowClear>
               <Option value="hot">Hot (for cold conditions)</Option>
               <Option value="cold">Cold (for hot conditions)</Option>
               <Option value="comfort">

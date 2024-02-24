@@ -18,6 +18,7 @@ export const OrderItemSchema = new Schema(
     food: { type: FoodModel.schema, require: true },
     price: { type: Number, required: true },
     quantity: { type: Number, required: true },
+    customizationDetails: { type: String, required: false },
   },
   {
     _id: false,
@@ -43,7 +44,6 @@ const orderSchema = new Schema(
       default: DeliveryStatus.PENDING_DELIVERY,
       enum: Object.values(DeliveryStatus),
     },
-    user: { type: Schema.Types.ObjectId, required: true, ref: "user" },
     user: { type: Schema.Types.ObjectId, required: true, ref: "user" },
   },
   {

@@ -1,8 +1,6 @@
 import axios from "axios";
 
 const getWeather = async (latitude, longitude) => {
-  console.log("Fetching weather for:", latitude, longitude);
-
   try {
     const response = await axios.get(
       `http://localhost:5000/api/weather?lat=${latitude}&lon=${longitude}`

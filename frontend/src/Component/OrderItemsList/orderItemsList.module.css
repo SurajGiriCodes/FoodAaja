@@ -24,3 +24,11 @@
 .table a:hover {
   opacity: 0.9;
 }
+
+.customizationDetails {
+  color: #4a4a4a; /* Choose a color that fits your site's theme */
+
+  padding: 10px; /* Add some padding for better spacing */
+  border-radius: 5px; /* Optional: adds rounded corners for a softer look */
+  margin-top: 5px; /* Add some space above the customization details */
+}
