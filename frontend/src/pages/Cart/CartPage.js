@@ -4,16 +4,27 @@ import Title from "../../Component/Title/Title";
 import classes from "./cartPage.module.css";
 import { Link } from "react-router-dom";
 import { useState } from "react"; // Import useState
-import { Modal, Button, Input } from "antd";
+import {
+  Modal,
+  Button,
+  Input,
+  Checkbox,
+  List,
+  Row,
+  Col,
+  InputNumber,
+} from "antd"; // Import Row and Col for layout
 
 export default function CartPage() {
   const { cart, removeFromCart, changeQuantity } = useCart();
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [currentItem, setCurrentItem] = useState(null); // To keep track of the item being customized
+  const [currentItem, setCurrentItem] = useState(null);
   const [customizationDetails, setCustomizationDetails] = useState("");
+  const [selectedAddIns, setSelectedAddIns] = useState([]);
 
   const showModal = (item) => {
-    setCurrentItem(item);
+    setCurrentItem({ ...item, addIns: item.addIns || [] });
+    setSelectedAddIns(item.addIns || []);
     setIsModalVisible(true);
   };
 
@@ -21,12 +32,29 @@ export default function CartPage() {
     setIsModalVisible(false);
   };
 
-  const handleOk = () => {
-    if (currentItem && customizationDetails.trim() !== "") {
-      changeQuantity(currentItem, currentItem.quantity, customizationDetails); // Pass customization details
+  // Function to handle change in add-ins selection
+  const handleAddInChange = (checked, item) => {
+    if (checked) {
+      setSelectedAddIns([...selectedAddIns, { ...item, quantity: 1 }]);
+    } else {
+      setSelectedAddIns(
+        selectedAddIns.filter((addIn) => addIn.name !== item.name)
+      );
     }
-    setIsModalVisible(false);
-    setCustomizationDetails(""); // Reset customization details
+  };
+
+  const handleOk = () => {
+    if (currentItem) {
+      changeQuantity(
+        currentItem,
+        currentItem.quantity,
+        customizationDetails,
+        selectedAddIns
+      );
+      setIsModalVisible(false);
+      setCustomizationDetails("");
+      setSelectedAddIns([]);
+    }
   };
 
   return (
@@ -112,11 +140,34 @@ export default function CartPage() {
               Customize your {currentItem.food.name}
             </p>
             <Input.TextArea
-              rows={4} // You can set the number of rows for the text area to determine its height
+              rows={4}
               placeholder="Enter customization details"
               value={customizationDetails}
               onChange={(e) => setCustomizationDetails(e.target.value)}
             />
+            {currentItem.food.addIns && currentItem.food.addIns.length > 0 ? (
+              <>
+                <p style={{ margin: "10px 0" }}>Add-Ins:</p>
+                <Row gutter={[16, 16]}>
+                  {currentItem.food.addIns.map((item) => (
+                    <Col key={item.name}>
+                      <Checkbox
+                        onChange={(e) =>
+                          handleAddInChange(e.target.checked, item)
+                        }
+                        checked={selectedAddIns.some(
+                          (addIn) => addIn.name === item.name
+                        )}
+                      >
+                        {item.name} - Rs {item.price}
+                      </Checkbox>
+                    </Col>
+                  ))}
+                </Row>
+              </>
+            ) : (
+              <p style={{ margin: "10px 0" }}>No add-ins available.</p>
+            )}
           </>
         )}
       </Modal>

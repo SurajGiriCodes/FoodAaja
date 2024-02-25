@@ -48,14 +48,20 @@ export default function CartProvider({ children }) {
   const changeQuantity = (
     cartItem,
     newQauntity,
-    newCustomizationDetails = cartItem.customizationDetails
+    newCustomizationDetails = cartItem.customizationDetails,
+    newAddIns = cartItem.addIns
   ) => {
     const { food } = cartItem;
+    const addInsTotalPrice = newAddIns.reduce(
+      (total, addIn) => total + addIn.price * addIn.quantity,
+      0
+    );
     const changedCartItem = {
       ...cartItem,
       quantity: newQauntity,
-      price: food.price * newQauntity,
+      price: (food.price + addInsTotalPrice) * newQauntity,
       customizationDetails: newCustomizationDetails,
+      addIns: newAddIns,
     };
 
     setCartItems(
@@ -65,15 +71,12 @@ export default function CartProvider({ children }) {
     );
   };
 
-  const addToCart = (food, customizationDetails = "") => {
+  const addToCart = (food, customizationDetails = "", addIns = []) => {
     const cartItem = cartItems.find((item) => item.food._id === food._id);
     if (cartItem) {
-      // If the item already exists but new customization details are provided, update the item
       const updatedItem = {
         ...cartItem,
         quantity: cartItem.quantity + 1,
-        customizationDetails:
-          customizationDetails || cartItem.customizationDetails, // Use new customization details or retain existing ones
       };
       setCartItems(
         cartItems.map((item) =>
@@ -84,7 +87,11 @@ export default function CartProvider({ children }) {
       // If the item doesn't exist, add it as a new item along with its customization details
       setCartItems([
         ...cartItems,
-        { food, quantity: 1, price: food.price, customizationDetails },
+        {
+          food,
+          quantity: 1,
+          price: food.price,
+        },
       ]);
     }
   };

@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { getByID } from "../../services/foodService";
 import classes from "../../pages/Menu/menu.module.css";
-import { Modal, Button, Form, Input, Select, notification } from "antd";
+import { Modal, Button, Form, Input, Select, notification, Space } from "antd";
+import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
 import {
   addFoodToRestaurant,
   deleteFoodFromRestaurant,
@@ -223,6 +224,53 @@ export default function MenuPageAdmin() {
           >
             <Input.TextArea />
           </Form.Item>
+
+          <Form.List name="addIns">
+            {(fields, { add, remove }) => (
+              <>
+                {fields.map(({ key, name, fieldKey, ...restField }) => (
+                  <Space
+                    key={key}
+                    style={{ display: "flex", marginBottom: 8 }}
+                    align="baseline"
+                  >
+                    <Form.Item
+                      {...restField}
+                      name={[name, "name"]}
+                      fieldKey={[fieldKey, "name"]}
+                      rules={[
+                        { required: true, message: "Missing add-in name" },
+                      ]}
+                    >
+                      <Input placeholder="Add-in Name" />
+                    </Form.Item>
+                    <Form.Item
+                      {...restField}
+                      name={[name, "price"]}
+                      fieldKey={[fieldKey, "price"]}
+                      rules={[
+                        { required: true, message: "Missing add-in price" },
+                      ]}
+                    >
+                      <Input placeholder="Add-in Price" type="number" />
+                    </Form.Item>
+                    <MinusCircleOutlined onClick={() => remove(name)} />
+                  </Space>
+                ))}
+                <Form.Item>
+                  <Button
+                    type="dashed"
+                    onClick={() => add()}
+                    block
+                    icon={<PlusOutlined />}
+                  >
+                    Add Add-in
+                  </Button>
+                </Form.Item>
+              </>
+            )}
+          </Form.List>
+
           <Form.Item>
             <Button type="primary" htmlType="submit">
               Submit

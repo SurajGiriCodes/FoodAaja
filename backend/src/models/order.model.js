@@ -13,11 +13,17 @@ export const LatLngSchema = new Schema(
   }
 );
 
+const AddInSchema = new Schema({
+  name: { type: String, required: true },
+  price: { type: Number, required: true },
+});
+
 export const OrderItemSchema = new Schema(
   {
     food: { type: FoodModel.schema, require: true },
     price: { type: Number, required: true },
     quantity: { type: Number, required: true },
+    addIns: [AddInSchema],
     customizationDetails: { type: String, required: false },
   },
   {
