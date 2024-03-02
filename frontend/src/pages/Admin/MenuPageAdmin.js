@@ -46,6 +46,7 @@ export default function MenuPageAdmin() {
   };
 
   const onFinish = async (values) => {
+    console.log(values);
     try {
       let updatedRestaurant;
       if (selectedFood) {
@@ -216,6 +217,58 @@ export default function MenuPageAdmin() {
               </Option>
             </Select>
           </Form.Item>
+          <Form.Item label="Main Category" required>
+            <Input.Group compact>
+              <Form.Item
+                name={["typeCategory", "name"]}
+                noStyle
+                rules={[
+                  { required: true, message: "Main category is required" },
+                ]}
+              >
+                <Input
+                  style={{ width: "50%" }}
+                  placeholder="Enter main category, e.g., Pizza"
+                />
+              </Form.Item>
+            </Input.Group>
+          </Form.Item>
+
+          <Form.List name={["typeCategory", "subcategories"]}>
+            {(fields, { add, remove }) => (
+              <>
+                {fields.map(({ key, name, ...restField }) => (
+                  <Space
+                    key={key}
+                    style={{ display: "flex", marginBottom: 8 }}
+                    align="baseline"
+                  >
+                    <Form.Item
+                      {...restField}
+                      name={[name]}
+                      rules={[
+                        { required: true, message: "Subcategory is required" },
+                      ]}
+                      noStyle
+                    >
+                      <Input placeholder="Enter subcategory, e.g., Veg Pizza" />
+                    </Form.Item>
+                    <MinusCircleOutlined onClick={() => remove(name)} />
+                  </Space>
+                ))}
+                <Form.Item>
+                  <Button
+                    type="dashed"
+                    onClick={() => add()}
+                    block
+                    icon={<PlusOutlined />}
+                  >
+                    Add Subcategory
+                  </Button>
+                </Form.Item>
+              </>
+            )}
+          </Form.List>
 
           <Form.Item
             label="Details"

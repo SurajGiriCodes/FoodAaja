@@ -165,3 +165,19 @@ export const getFilteredRestaurants = async (maxPrice) => {
     throw error; // Or return default value, e.g., return [];
   }
 };
+
+// Function to search food items by name, subcategories, and price range
+export const searchFoodItems = async (searchTerm, minPrice, maxPrice) => {
+  try {
+    // Make a GET request to the searchFoodItems endpoint with the searchTerm, minPrice, and maxPrice as query parameters
+    const response = await axios.get("/api/restaurants/searchFoodItems", {
+      params: { searchTerm, minPrice, maxPrice },
+    });
+    // Return the data from the response
+    return response.data;
+  } catch (error) {
+    // Log and rethrow the error for the calling component to handle
+    console.error("Error searching food items:", error);
+    throw error;
+  }
+};

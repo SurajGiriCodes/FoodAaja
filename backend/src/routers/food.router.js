@@ -1,8 +1,60 @@
 import { Router } from "express";
 import { RestaurantModel } from "../models/restrurent.model.js";
+import { FoodModel } from "../models/food.model.js";
 import handler from "express-async-handler";
 
 const router = Router();
+router.get("/searchFoodItems", async (req, res) => {
+  try {
+    // Retrieve search term and price range from query parameters
+    const { searchTerm, minPrice, maxPrice } = req.query;
+
+    // Convert minPrice and maxPrice to numbers
+    const minPriceNum = Number(minPrice);
+    const maxPriceNum = Number(maxPrice);
+
+    // Find restaurants that have menu items matching the search term and price range
+    const matchingRestaurants = await RestaurantModel.find({
+      menu: {
+        $elemMatch: {
+          name: { $regex: searchTerm, $options: "i" },
+          price: { $gte: minPriceNum, $lte: maxPriceNum },
+        },
+      },
+    });
+
+    // Extract matching menu items from the matching restaurants
+    const matchingMenuItems = [];
+    matchingRestaurants.forEach((restaurant) => {
+      const matchedItems = restaurant.menu.filter(
+        (item) =>
+          item.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
+          item.price >= minPriceNum &&
+          item.price <= maxPriceNum
+      );
+      // Add an object for each matched item that includes restaurant details and the item details
+      matchedItems.forEach((item) => {
+        matchingMenuItems.push({
+          restaurant: {
+            id: restaurant._id,
+            name: restaurant.name,
+            location: restaurant.location,
+            rating: restaurant.rating,
+          },
+          menuItem: item,
+        });
+      });
+    });
+
+    // Respond with the matching menu items
+    res.json(matchingMenuItems);
+  } catch (error) {
+    console.error("Error searching food items:", error);
+    res
+      .status(500)
+      .json({ message: "Error searching food items", error: error.message });
+  }
+});
 
 router.post("/restaurants", async (req, res) => {
   try {
@@ -215,5 +267,27 @@ router.get("/api/restaurants/:restaurantId/tags", async (req, res) => {
     res.status(500).send(error);
   }
 });
+
+// In your server's route handling file
+router.get("/search", async (req, res) => {
+  try {
+    const { name, subcategories } = req.query;
+
+    // Building the query
+    const query = {
+      $and: [
+        { name: { $regex: name, $options: "i" } }, // Case-insensitive regex search for the name
+        { "typeCategory.subcategories": { $in: subcategories.split(",") } }, // Assuming subcategories are passed as a comma-separated string
+      ],
+    };
+
+    const foods = await FoodModel.find(query);
+    res.json(foods);
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching food items", error });
+  }
+});
+
+// Assuming 'foodRouter' is your Express router and FoodModel is your food item model
 
 export default router;

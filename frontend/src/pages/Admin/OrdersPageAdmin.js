@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Table, Tag, Space } from "antd";
+import { Table, Tag, Button } from "antd";
 import moment from "moment";
 import { getAllOrdersAdmin } from "../../services/OrderService";
 
@@ -18,6 +18,50 @@ export default function OrdersPageAdmin() {
     fetchOrders();
   }, []);
   const totalRevenue = orders.reduce((acc, order) => acc + order.totalPrice, 0);
+  const expandedRowRender = (record) => {
+    const itemColumns = [
+      { title: "Item Name", dataIndex: ["food", "name"], key: "name" },
+      { title: "Quantity", dataIndex: "quantity", key: "quantity" },
+      {
+        title: "Customization",
+        dataIndex: "customizationDetails",
+        key: "customizationDetails",
+      },
+      {
+        title: "Add-ins",
+        key: "addIns",
+        dataIndex: "addIns",
+        render: (addIns) => (
+          <>
+            {addIns.map((addIn, index) => (
+              <div key={index} style={{ margin: "5px 0", paddingLeft: "15px" }}>
+                {addIn.name} - Rs {addIn.price}
+              </div>
+            ))}
+          </>
+        ),
+      },
+    ];
+
+    return (
+      <div>
+        <p>Order ID: {record._id}</p>
+        <p>Customer Name: {record.name}</p>
+        <p>Address: {record.address}</p>
+        <p>
+          Date & Time: {moment(record.createdAt).format("YYYY-MM-DD HH:mm:ss")}
+        </p>
+        <p>Total Price: Rs {record.totalPrice}</p>
+        {/* Render items table */}
+        <Table
+          columns={itemColumns}
+          dataSource={record.items}
+          pagination={false}
+          size="small"
+        />
+      </div>
+    );
+  };
 
   const columns = [
     {
@@ -41,27 +85,40 @@ export default function OrdersPageAdmin() {
       dataIndex: "createdAt",
       render: (date) => moment(date).format("YYYY-MM-DD HH:mm:ss"),
     },
-    {
-      title: "Items",
-      key: "items",
-      dataIndex: "items",
-      render: (items) => (
-        <>
-          {items.map((item, index) => (
-            <div key={index}>
-              <p>
-                {item.food.name} - Qty: {item.quantity}
-              </p>
-              {item.customizationDetails && (
-                <p style={{ color: "blue", margin: "5px 0" }}>
-                  Customization: {item.customizationDetails}
-                </p>
-              )}
-            </div>
-          ))}
-        </>
-      ),
-    },
+    // {
+    //   title: "Items",
+    //   key: "items",
+    //   dataIndex: "items",
+    //   render: (items) => (
+    //     <>
+    //       {items.map((item, index) => (
+    //         <div key={index}>
+    //           <p>
+    //             {item.food.name} - Qty: {item.quantity}
+    //           </p>
+    //           {item.customizationDetails && (
+    //             <p style={{ color: "blue", margin: "5px 0" }}>
+    //               Customization: {item.customizationDetails}
+    //             </p>
+    //           )}
+    //           {item.addIns && item.addIns.length > 0 && (
+    //             <div style={{ marginTop: "10px" }}>
+    //               <p style={{ fontWeight: "bold" }}>Add-ins:</p>
+    //               {item.addIns.map((addIn, addInIndex) => (
+    //                 <p
+    //                   key={addInIndex}
+    //                   style={{ margin: "5px 0", paddingLeft: "15px" }}
+    //                 >
+    //                   {addIn.name} - Rs {addIn.price}
+    //                 </p>
+    //               ))}
+    //             </div>
+    //           )}
+    //         </div>
+    //       ))}
+    //     </>
+    //   ),
+    // },
 
     {
       title: "Total Price",
@@ -103,6 +160,10 @@ export default function OrdersPageAdmin() {
         columns={columns}
         dataSource={orders}
         rowKey="_id"
+        expandable={{
+          expandedRowRender,
+          rowExpandable: (record) => true, // You can specify conditions here
+        }}
         pagination={{
           pageSize: 6,
           // Other pagination settings...
