@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import classes from "./orderItemsList.module.css";
 
 export default function OrderItemsList({ order }) {
+  console.log(order);
   return (
     <table className={classes.table}>
       <tbody>

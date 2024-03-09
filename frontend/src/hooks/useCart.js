@@ -20,6 +20,7 @@ export default function CartProvider({ children }) {
     setTotalPrice(totalPrice);
     setTotalCount(totalCount);
     localStorage.setItem(
+      //save local storage. This means the current state of the cart is preserved even if the user leaves the website or closes their browser.
       CART_KEY,
       JSON.stringify({
         items: cartItems,
@@ -27,7 +28,7 @@ export default function CartProvider({ children }) {
         totalCount,
       })
     );
-  }, [cartItems]); //when ever we change card items eg changing item , this useeffect will be called
+  }, [cartItems]); //whenever we change card items eg changing item , this useeffect will be called
 
   function getCartFromLocalStorage() {
     const storedCart = localStorage.getItem(CART_KEY); //It checks if data associated with that key exists and, if it does, it parses the data from a JSON string to a JavaScript object.
@@ -45,33 +46,35 @@ export default function CartProvider({ children }) {
     setCartItems(filteredCartItems);
   };
 
-  const changeQuantity = (
-    cartItem,
-    newQauntity,
-    newCustomizationDetails = cartItem.customizationDetails,
-    newAddIns = cartItem.addIns
-  ) => {
-    const { food } = cartItem;
-    const addInsTotalPrice = newAddIns.reduce(
-      (total, addIn) => total + addIn.price * addIn.quantity,
-      0
-    );
+  const changeQuantity = (cartItem, newQuantity, newUnits) => {
+    // Calculate the total price based on the new units' add-ins and the item's base price.
+    const newTotalPrice = newUnits
+      ? newUnits.reduce((total, unit) => {
+          const addInsTotalPrice = unit.addIns
+            ? unit.addIns.reduce((subTotal, addIn) => subTotal + addIn.price, 0)
+            : 0;
+          return total + (cartItem.food.price + addInsTotalPrice);
+        }, 0) * newQuantity
+      : cartItem.food.price * newQuantity;
+
+    // Construct the updated cart item with the new quantity, units, and recalculated price.
     const changedCartItem = {
       ...cartItem,
-      quantity: newQauntity,
-      price: (food.price + addInsTotalPrice) * newQauntity,
-      customizationDetails: newCustomizationDetails,
-      addIns: newAddIns,
+      quantity: newQuantity,
+      price: newTotalPrice,
+      Customization: newUnits, // Update the units based on the new customizations passed in
     };
 
+    // Update the cart items array with the modified item.
     setCartItems(
       cartItems.map((item) =>
-        item.food._id === food._id ? changedCartItem : item
+        item.food._id === cartItem.food._id ? changedCartItem : item
       )
     );
   };
 
-  const addToCart = (food, customizationDetails = "", addIns = []) => {
+  //This function allows users to add items to their cart
+  const addToCart = (food) => {
     const cartItem = cartItems.find((item) => item.food._id === food._id);
     if (cartItem) {
       const updatedItem = {
@@ -84,7 +87,6 @@ export default function CartProvider({ children }) {
         )
       );
     } else {
-      // If the item doesn't exist, add it as a new item along with its customization details
       setCartItems([
         ...cartItems,
         {

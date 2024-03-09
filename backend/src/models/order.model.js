@@ -18,13 +18,20 @@ const AddInSchema = new Schema({
   price: { type: Number, required: true },
 });
 
-export const OrderItemSchema = new Schema(
+const OrderItemUnitSchema = new Schema(
   {
-    food: { type: FoodModel.schema, require: true },
-    price: { type: Number, required: true },
-    quantity: { type: Number, required: true },
     addIns: [AddInSchema],
     customizationDetails: { type: String, required: false },
+  },
+  { _id: false }
+);
+
+export const OrderItemSchema = new Schema(
+  {
+    food: { type: FoodModel.schema, required: true },
+    price: { type: Number, required: true },
+    quantity: { type: Number, required: true },
+    Customization: { type: [OrderItemUnitSchema], required: true },
   },
   {
     _id: false,

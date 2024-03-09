@@ -17,8 +17,6 @@ export const dbconnect = async () => {
       socketTimeoutMS: 30000,
     });
     await seedUsers();
-    // await seedFoods();
-    // await seedRestaurants();
 
     console.log("connect successfilly---");
   } catch (error) {
@@ -40,17 +38,3 @@ async function seedUsers() {
 
   console.log("Users seed is done!");
 }
-
-// async function seedRestaurants() {
-//   const restaurantCount = await RestaurantModel.countDocuments();
-//   if (restaurantCount > 0) {
-//     console.log("Restaurant seed is already done!");
-//     return;
-//   }
-//   for (const restaurant of sample_restaurants) {
-//     restaurant.imageUrl = `/images/${restaurant.imageUrl}`;
-//     await RestaurantModel.create(restaurant);
-//   }
-
-//   console.log("Restaurant seed is done!");
-// }

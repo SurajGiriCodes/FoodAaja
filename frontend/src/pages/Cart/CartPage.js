@@ -19,12 +19,23 @@ export default function CartPage() {
   const { cart, removeFromCart, changeQuantity } = useCart();
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [currentItem, setCurrentItem] = useState(null);
-  const [customizationDetails, setCustomizationDetails] = useState("");
-  const [selectedAddIns, setSelectedAddIns] = useState([]);
+  const [customizations, setCustomizations] = useState([]);
 
   const showModal = (item) => {
-    setCurrentItem({ ...item, addIns: item.addIns || [] });
-    setSelectedAddIns(item.addIns || []);
+    setCurrentItem(item);
+
+    // Initialize a customization array based on the item's quantity
+    const initialCustomizations = item.units
+      ? item.units.map((unit) => ({
+          addIns: unit.addIns || [],
+          customizationDetails: unit.customizationDetails || "",
+        }))
+      : Array.from({ length: item.quantity }, () => ({
+          addIns: [],
+          customizationDetails: "",
+        }));
+
+    setCustomizations(initialCustomizations);
     setIsModalVisible(true);
   };
 
@@ -32,28 +43,10 @@ export default function CartPage() {
     setIsModalVisible(false);
   };
 
-  // Function to handle change in add-ins selection
-  const handleAddInChange = (checked, item) => {
-    if (checked) {
-      setSelectedAddIns([...selectedAddIns, { ...item, quantity: 1 }]);
-    } else {
-      setSelectedAddIns(
-        selectedAddIns.filter((addIn) => addIn.name !== item.name)
-      );
-    }
-  };
-
   const handleOk = () => {
     if (currentItem) {
-      changeQuantity(
-        currentItem,
-        currentItem.quantity,
-        customizationDetails,
-        selectedAddIns
-      );
+      changeQuantity(currentItem, currentItem.quantity, customizations);
       setIsModalVisible(false);
-      setCustomizationDetails("");
-      setSelectedAddIns([]);
     }
   };
 
@@ -75,9 +68,10 @@ export default function CartPage() {
                 <div>
                   <select
                     value={item.quantity}
-                    onChange={(e) =>
-                      changeQuantity(item, Number(e.target.value))
-                    }
+                    onChange={(e) => {
+                      const newQuantity = Number(e.target.value);
+                      changeQuantity(item, newQuantity);
+                    }}
                   >
                     <option>1</option>
                     <option>2</option>
@@ -134,42 +128,65 @@ export default function CartPage() {
           </Button>,
         ]}
       >
-        {currentItem && (
-          <>
-            <p style={{ marginBottom: "10px" }}>
-              Customize your {currentItem.food.name}
-            </p>
-            <Input.TextArea
-              rows={4}
-              placeholder="Enter customization details"
-              value={customizationDetails}
-              onChange={(e) => setCustomizationDetails(e.target.value)}
-            />
-            {currentItem.food.addIns && currentItem.food.addIns.length > 0 ? (
-              <>
-                <p style={{ margin: "10px 0" }}>Add-Ins:</p>
-                <Row gutter={[16, 16]}>
-                  {currentItem.food.addIns.map((item) => (
-                    <Col key={item.name}>
-                      <Checkbox
-                        onChange={(e) =>
-                          handleAddInChange(e.target.checked, item)
-                        }
-                        checked={selectedAddIns.some(
-                          (addIn) => addIn.name === item.name
-                        )}
-                      >
-                        {item.name} - Rs {item.price}
-                      </Checkbox>
-                    </Col>
-                  ))}
-                </Row>
-              </>
-            ) : (
-              <p style={{ margin: "10px 0" }}>No add-ins available.</p>
-            )}
-          </>
-        )}
+        {currentItem &&
+          customizations.map((customization, index) => (
+            <div key={index}>
+              <h3>Customization for item #{index + 1}:</h3>
+              <Input.TextArea
+                rows={4}
+                value={customization.customizationDetails}
+                onChange={(e) => {
+                  const updatedCustomizations = [...customizations];
+                  updatedCustomizations[index].customizationDetails =
+                    e.target.value;
+                  setCustomizations(updatedCustomizations);
+                }}
+                placeholder="Enter customization details"
+              />
+              <div>
+                {currentItem.food.addIns &&
+                  currentItem.food.addIns.length > 0 && (
+                    <>
+                      <p>Add-Ins:</p>
+                      <Row gutter={[16, 16]}>
+                        {currentItem.food.addIns.map((addIn, addInIndex) => (
+                          <Col key={addInIndex}>
+                            <Checkbox
+                              checked={
+                                !!customization.addIns.find(
+                                  (ai) => ai.name === addIn.name
+                                )
+                              }
+                              onChange={(e) => {
+                                const updatedCustomizations = [
+                                  ...customizations,
+                                ];
+                                const currentAddIns =
+                                  updatedCustomizations[index].addIns;
+                                if (e.target.checked) {
+                                  updatedCustomizations[index].addIns = [
+                                    ...currentAddIns,
+                                    { ...addIn, quantity: 1 },
+                                  ];
+                                } else {
+                                  updatedCustomizations[index].addIns =
+                                    currentAddIns.filter(
+                                      (ai) => ai.name !== addIn.name
+                                    );
+                                }
+                                setCustomizations(updatedCustomizations);
+                              }}
+                            >
+                              {addIn.name} - Rs {addIn.price}
+                            </Checkbox>
+                          </Col>
+                        ))}
+                      </Row>
+                    </>
+                  )}
+              </div>
+            </div>
+          ))}
       </Modal>
     </>
   );

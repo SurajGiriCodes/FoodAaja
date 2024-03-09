@@ -94,6 +94,7 @@ export const updateDeliveryStatus = async (orderId, deliveryStatus) => {
       { deliveryStatus }
     );
     return response.data;
+    
   } catch (error) {
     console.error("Failed to update delivery status:", error);
     throw error;
