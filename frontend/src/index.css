@@ -15,3 +15,7 @@ body {
 a {
   text-decoration: none;
 }
+
+.ant-table-thead .ant-table-cell {
+  background-color: #e6ffee !important;
+}

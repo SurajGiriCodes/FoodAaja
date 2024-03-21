@@ -101,7 +101,9 @@ export default function MenuPage({ margin }) {
     const weatherCondition = mapWeatherToCondition(currentWeather); // Implement based on your criteria, such as temperature and weather type
     const newRecommendations = resMenu.menu.filter((item) => {
       const matchesTime = item.tags.includes(timeOfDay);
-      const matchesWeather = item.category === weatherCondition;
+      const matchesWeather = item.category.some(
+        (category) => category === weatherCondition
+      );
       return matchesTime && matchesWeather;
     });
 

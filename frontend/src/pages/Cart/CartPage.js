@@ -25,7 +25,7 @@ export default function CartPage() {
     setCurrentItem(item);
 
     // Initialize a customization array based on the item's quantity
-    const initialCustomizations = item.units
+    const initialCustomizations = item.units // If the item has 'units' defined (which is probably an array), it maps each 'unit' to an object containing 'addIns' and 'customizationDetails'. If there are no 'units', it creates an array based on the item's 'quantity', with each entry being an object with default 'addIns' (empty array) and 'customizationDetails' (empty string).
       ? item.units.map((unit) => ({
           addIns: unit.addIns || [],
           customizationDetails: unit.customizationDetails || "",
@@ -118,8 +118,8 @@ export default function CartPage() {
         </div>
       )}
       <Modal
-        title="Customize Food Item"
-        visible={isModalVisible}
+        open={isModalVisible}
+        title={`Customize Your ${currentItem ? currentItem.food.name : ""}`}
         onOk={handleOk}
         onCancel={handleCancel}
         footer={[
@@ -130,8 +130,11 @@ export default function CartPage() {
       >
         {currentItem &&
           customizations.map((customization, index) => (
-            <div key={index}>
-              <h3>Customization for item #{index + 1}:</h3>
+            <div key={index} style={{ paddingBottom: "20px" }}>
+              <div style={{ paddingBottom: "5px" }}>
+                <h3>Customization for item #{index + 1}</h3>
+              </div>
+
               <Input.TextArea
                 rows={4}
                 value={customization.customizationDetails}
@@ -147,10 +150,13 @@ export default function CartPage() {
                 {currentItem.food.addIns &&
                   currentItem.food.addIns.length > 0 && (
                     <>
-                      <p>Add-Ins:</p>
+                      <div style={{ paddingTop: "10px" }}>
+                        <p>Add-Ins:</p>
+                      </div>
+
                       <Row gutter={[16, 16]}>
                         {currentItem.food.addIns.map((addIn, addInIndex) => (
-                          <Col key={addInIndex}>
+                          <Col key={addInIndex} style={{ paddingTop: "5px" }}>
                             <Checkbox
                               checked={
                                 !!customization.addIns.find(

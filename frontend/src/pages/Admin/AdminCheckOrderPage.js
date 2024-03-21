@@ -158,6 +158,7 @@ const AdminCheckOrderPage = () => {
               return null;
             },
           }}
+          bordered
           style={{
             marginTop: "10px",
             marginBottom: "10px",

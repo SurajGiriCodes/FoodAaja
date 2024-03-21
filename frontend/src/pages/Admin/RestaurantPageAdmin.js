@@ -5,7 +5,7 @@ import Title from "../../Component/Title/Title";
 function RestaurantPageAdmin() {
   return (
     <>
-      <Title title="Restaurents" margin="1.5rem 0 0 2.5rem" />
+      <Title title="Restaurents" margin="1.5rem 0 0 2.5rem" marginLeft="20px" />
       <AdminThumbnailsComponent />
     </>
   );

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { getByID } from "../../services/foodService";
+import {  getByID } from "../../services/foodService";
+
 import classes from "../../pages/Menu/menu.module.css";
 import { Modal, Button, Form, Input, Select, notification, Space } from "antd";
 import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
@@ -15,11 +16,15 @@ export default function MenuPageAdmin() {
   const [resmenu, setResMenu] = useState({});
   const { restaurantId } = useParams();
   const [selectedFood, setSelectedFood] = useState(null);
+  const [restaurants, setRestaurants] = useState([]);
+  const [selectedRestaurantId, setSelectedRestaurantId] = useState(null);
 
   useEffect(() => {
     console.log("Restaurant ID:", restaurantId);
     getByID(restaurantId).then(setResMenu);
   }, [restaurantId]);
+
+  
 
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [form] = Form.useForm();
@@ -49,16 +54,23 @@ export default function MenuPageAdmin() {
     console.log(values);
     try {
       let updatedRestaurant;
+      const foodValuesWithRestaurantInfo = {
+        ...values,
+        restaurantId: restaurantId, // Assuming restaurantId is available in the scope
+      };
       if (selectedFood) {
         // Call a function to update the existing menu item
         updatedRestaurant = await updateFoodInRestaurant(
           restaurantId,
           selectedFood._id,
-          values
+          foodValuesWithRestaurantInfo
         );
       } else {
         // Add a new menu item
-        updatedRestaurant = await addFoodToRestaurant(restaurantId, values);
+        updatedRestaurant = await addFoodToRestaurant(
+          restaurantId,
+          foodValuesWithRestaurantInfo
+        );
       }
       setResMenu(updatedRestaurant);
       setIsModalVisible(false);
@@ -217,58 +229,6 @@ export default function MenuPageAdmin() {
               </Option>
             </Select>
           </Form.Item>
-          <Form.Item label="Main Category" required>
-            <Input.Group compact>
-              <Form.Item
-                name={["typeCategory", "name"]}
-                noStyle
-                rules={[
-                  { required: true, message: "Main category is required" },
-                ]}
-              >
-                <Input
-                  style={{ width: "50%" }}
-                  placeholder="Enter main category, e.g., Pizza"
-                />
-              </Form.Item>
-            </Input.Group>
-          </Form.Item>
-
-          <Form.List name={["typeCategory", "subcategories"]}>
-            {(fields, { add, remove }) => (
-              <>
-                {fields.map(({ key, name, ...restField }) => (
-                  <Space
-                    key={key}
-                    style={{ display: "flex", marginBottom: 8 }}
-                    align="baseline"
-                  >
-                    <Form.Item
-                      {...restField}
-                      name={[name]}
-                      rules={[
-                        { required: true, message: "Subcategory is required" },
-                      ]}
-                      noStyle
-                    >
-                      <Input placeholder="Enter subcategory, e.g., Veg Pizza" />
-                    </Form.Item>
-                    <MinusCircleOutlined onClick={() => remove(name)} />
-                  </Space>
-                ))}
-                <Form.Item>
-                  <Button
-                    type="dashed"
-                    onClick={() => add()}
-                    block
-                    icon={<PlusOutlined />}
-                  >
-                    Add Subcategory
-                  </Button>
-                </Form.Item>
-              </>
-            )}
-          </Form.List>
 
           <Form.Item
             label="Details"

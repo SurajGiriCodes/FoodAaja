@@ -13,6 +13,11 @@ const FoodSchema = new Schema({
       price: { type: Number, required: true },
     },
   ],
+  restaurantId: {
+    type: Schema.Types.ObjectId,
+    ref: "restaurant",
+    required: true,
+  },
 });
 
 export const FoodModel = model("food", FoodSchema);
