@@ -23,7 +23,7 @@ export default function ProfilePage() {
   return (
     <div className={classes.container}>
       <div className={classes.details}>
-        <Title title="Update Profile" />
+        <Title title="Update Profile" marginTop="20px" marginBottom="20px" />
         <form onSubmit={handleSubmit(submit)}>
           <Input
             defaultValue={user.name}

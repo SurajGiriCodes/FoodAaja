@@ -64,12 +64,11 @@ router.post(
         data,
         {
           headers: {
-            Authorization: "Key 7950ac9f1ee64e04b4ebf01aefcb33a0",
+            Authorization: "Key d9d1a73af4364a73921020e145409c24",
             "Content-Type": "application/json",
           },
         }
       );
-
       res.json(response.data);
     } catch (error) {
       console.error("Payment initiation failed:", error);
@@ -188,6 +187,68 @@ router.get(
   })
 );
 
+router.get(
+  "/delivered-orders/:userId",
+  handler(async (req, res) => {
+    try {
+      const userId = req.params.userId;
+
+      // Find the delivered orders for the specified user ID
+      const deliveredOrders = await OrderModel.find({
+        user: userId,
+        deliveryStatus: "Delivered",
+      })
+        .sort({ createdAt: -1 }) // Sort by createdAt field in descending order
+        .populate("items.food", "name price menuImageUrl"); // Populate food details for each item
+
+      if (!deliveredOrders || deliveredOrders.length === 0) {
+        return res
+          .status(404)
+          .json({ message: "No delivered orders found for the user" });
+      }
+
+      res.json(deliveredOrders);
+    } catch (error) {
+      console.error("Error fetching delivered orders:", error);
+      res.status(500).send("Internal Server Error");
+    }
+  })
+);
+
+router.put("/submit-rating", async (req, res) => {
+  try {
+    const { ratings } = req.body;
+
+    const updatedOrderItems = [];
+
+    for (const ratingData of ratings) {
+      const { orderId, foodItemId, rating } = ratingData;
+
+      const updatedOrderItem = await OrderModel.findOneAndUpdate(
+        {
+          _id: orderId,
+          "items.food._id": foodItemId,
+        },
+        {
+          $set: { "items.$.rating": rating },
+        },
+        { new: true }
+      );
+
+      if (!updatedOrderItem) {
+        return res.status(404).json({
+          error: `Order item not found for orderId: ${orderId} and foodItemId: ${foodItemId}`,
+        });
+      }
+      updatedOrderItems.push(updatedOrderItem);
+    }
+    res.json({ message: "Ratings updated successfully", updatedOrderItems });
+  } catch (error) {
+    console.error("Failed to update ratings:", error);
+    res.status(500).json({ error: "Failed to update ratings" });
+  }
+});
+
 // Update the delivery status of an order
 router.post(
   "/orders/:orderId/delivery-status",
@@ -230,8 +291,9 @@ router.put("/update-delivery-status/:orderId", async (req, res) => {
     // Check if the new delivery status is 'Delivered' and current order status is 'PENDING'
     // If so, update the status to 'PAID'
     const newStatus =
-      deliveryStatus === "Delivered" &&
-      currentOrder.status === OrderStatus.PENDING
+      (deliveryStatus === "Delivered" &&
+        currentOrder.status === OrderStatus.PENDING) ||
+      currentOrder.status === OrderStatus.NEW
         ? OrderStatus.PAID
         : currentOrder.status;
 

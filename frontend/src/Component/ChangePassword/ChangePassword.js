@@ -20,7 +20,7 @@ export default function ChangePassword() {
 
   return (
     <div>
-      <Title title="Change Password" />
+      <Title title="Change Password" marginTop="20px" marginBottom="20px" />
       <form onSubmit={handleSubmit(submit)}>
         <Input
           type="password"

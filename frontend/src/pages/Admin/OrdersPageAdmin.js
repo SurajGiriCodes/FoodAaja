@@ -9,28 +9,14 @@ export default function OrdersPageAdmin() {
   const { RangePicker } = DatePicker;
   const [orders, setOrders] = useState([]);
   const [restaurants, setRestaurants] = useState([]);
-  const [selectedRestaurantId, setSelectedRestaurantId] = useState(null);
-  const [selectedDateRange, setSelectedDateRange] = useState([]);
-  const [dailyRevenue, setDailyRevenue] = useState({
-    "2024-03-01": 1000, // Default value for March 1st, 2024
-    "2024-03-02": 1500,
-  });
-
-  useEffect(() => {
-    if (selectedRestaurantId && selectedDateRange.length === 2) {
-      const [startDate, endDate] = selectedDateRange;
-      const revenue = calculateRevenueForDateRange(
-        orders,
-        selectedRestaurantId,
-        startDate,
-        endDate
-      );
-      console.log(revenue);
-      console.log("Selected Restaurant:", selectedRestaurantId);
-      console.log("Daily Revenue:", revenue);
-      setDailyRevenue(revenue);
-    }
-  }, [selectedRestaurantId, selectedDateRange, orders]);
+  const [selectedRestaurantId, setSelectedRestaurantId] = useState(
+    "655888c75ed611910064db69"
+  );
+  const [selectedDateRange, setSelectedDateRange] = useState([
+    moment("2024-03-01", "YYYY-MM-DD").toDate(), // Default start date
+    moment("2024-03-30", "YYYY-MM-DD").toDate(),
+  ]);
+  const [dailyRevenue, setDailyRevenue] = useState({});
 
   useEffect(() => {
     getAll()
@@ -53,6 +39,19 @@ export default function OrdersPageAdmin() {
     };
     fetchOrders();
   }, []);
+
+  useEffect(() => {
+    if (selectedRestaurantId && selectedDateRange.length === 2) {
+      const [startDate, endDate] = selectedDateRange;
+      const revenue = calculateRevenueForDateRange(
+        orders,
+        selectedRestaurantId,
+        startDate,
+        endDate
+      );
+      setDailyRevenue(revenue);
+    }
+  }, [selectedRestaurantId, selectedDateRange, orders]);
 
   const calculateRevenueForDateRange = (
     orders,
@@ -128,6 +127,15 @@ export default function OrdersPageAdmin() {
   const expandedRowRender = (record) => {
     const itemColumns = [
       { title: "Item Name", dataIndex: ["food", "name"], key: "name" },
+      {
+        title: "Restaurant",
+        key: "restaurant",
+        render: (text, record) => {
+          const restaurantId = record.food.restaurantId;
+          const restaurant = restaurants.find((r) => r._id === restaurantId);
+          return restaurant ? restaurant.name : "Unknown";
+        },
+      },
       { title: "Quantity", dataIndex: "quantity", key: "quantity" },
       {
         title: "Customization",
@@ -260,6 +268,7 @@ export default function OrdersPageAdmin() {
           showSearch
           style={{ width: 200, marginBottom: "16px", marginTop: "20px" }}
           placeholder="Select a restaurant"
+          value={selectedRestaurantId}
           onChange={(value) => {
             setSelectedRestaurantId(value);
           }}

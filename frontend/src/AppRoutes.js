@@ -2,7 +2,6 @@ import React from "react";
 import { Route, Routes } from "react-router-dom";
 import HomePage from "./pages/Home/HomePage";
 import MenuPage from "./pages/Menu/MenuPage";
-import FoodPage from "./pages/Food/foodPage";
 import CartPage from "./pages/Cart/CartPage";
 import LoginPage from "./pages/Login/LoginPage";
 import RestaurantPageAdmin from "./pages/Admin/RestaurantPageAdmin";
@@ -37,7 +36,6 @@ export default function AppRoutes() {
         <Route path="/OrdersAdmin" element={<OrdersPageAdmin />} />
         <Route path="/OrderCheck" element={<AdminCheckOrderPage />} />
         <Route path="/adminMenu/:restaurantId" element={<MenuPageAdmin />} />
-        <Route path="/food" element={<FoodPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route
           path="/checkout"

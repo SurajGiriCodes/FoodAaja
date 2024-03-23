@@ -1,5 +1,5 @@
 import React from "react";
-import { Link, Navigate } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { useCart } from "../../hooks/useCart";
 import classes from "./header.module.css";
 import { useAuth } from "../../hooks/useAuth";
@@ -8,6 +8,7 @@ const { Header: AntHeader } = Layout;
 
 function AdminHeader() {
   const { user, logout } = useAuth();
+  const location = useLocation();
   return (
     <AntHeader
       style={{
@@ -16,11 +17,11 @@ function AdminHeader() {
         width: "100%",
         borderBottom: "1px solid #e8e8e8",
         fontFamily: "Quicksand, sans-serif",
-        position: "fixed", // This makes the header fixed at the top
-        top: 0, // Aligns the header at the top of the viewport
-        left: 0, // Aligns the header at the left of the viewport
-        right: 0, // Ensures the header extends to the right of the viewport
-        zIndex: 1000, // Ensures the header is above other content
+        position: "fixed",
+        top: 0,
+        left: 0,
+        right: 0,
+        zIndex: 1000,
       }}
     >
       <div
@@ -36,7 +37,7 @@ function AdminHeader() {
         </div>
         <Menu
           mode="horizontal"
-          defaultSelectedKeys={["1"]}
+          selectedKeys={[location.pathname]}
           style={{
             display: "flex",
             justifyContent: "flex-end",
@@ -45,13 +46,13 @@ function AdminHeader() {
             fontSize: "15px",
           }}
         >
-          <Menu.Item key="1">
+          <Menu.Item key="/restaurants">
             <Link to="/restaurants">Restaurants</Link>
           </Menu.Item>
-          <Menu.Item key="2">
+          <Menu.Item key="/OrdersAdmin">
             <Link to="/OrdersAdmin">Orders</Link>
           </Menu.Item>
-          <Menu.Item key="3">
+          <Menu.Item key="/OrderCheck">
             <Link to="/OrderCheck">Check Orders</Link>
           </Menu.Item>
           <Menu.Item key="4">

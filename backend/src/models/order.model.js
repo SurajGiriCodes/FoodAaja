@@ -32,6 +32,7 @@ export const OrderItemSchema = new Schema(
     price: { type: Number, required: true },
     quantity: { type: Number, required: true },
     Customization: { type: [OrderItemUnitSchema], required: true },
+    rating: { type: Number, default: null },
   },
   {
     _id: false,

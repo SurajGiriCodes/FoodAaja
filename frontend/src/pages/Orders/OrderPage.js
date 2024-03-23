@@ -34,7 +34,13 @@ export default function OrderPage() {
   return (
     <>
       <div className={classes.container}>
-        <Title title="Orders" margin="1.5rem 0 0 .2rem" fontSize="1.9rem" />
+        <Title
+          title="Orders"
+          margin="1.5rem 0 0 .2rem"
+          fontSize="1.9rem"
+          marginTop="20px"
+          marginBottom="20px"
+        />
 
         {allStatus && (
           <div className={classes.all_status}>

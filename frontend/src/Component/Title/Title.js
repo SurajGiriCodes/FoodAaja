@@ -13,8 +13,8 @@ export default function Title({
       style={{
         fontSize,
         margin,
-        marginBottom: "20px",
-        marginTop: "20px",
+        marginBottom,
+        marginTop,
         color: "#616161",
         marginLeft: marginLeft,
       }}

@@ -25,6 +25,30 @@ export const initiatePayment = async (paymentDetails) => {
   }
 };
 
+// Define the lookupPaymentStatus function
+export const lookupPaymentStatus = async (orderId) => {
+  try {
+    // Make a request to the payment lookup endpoint
+    const response = await axios.post(
+      "/epayment/lookup/",
+      { orderId }, // Assuming orderId is the parameter required for the lookup
+      {
+        headers: {
+          Authorization: "Key d9d1a73af4364a73921020e145409c24", // Replace YOUR_AUTH_TOKEN with your actual authentication token
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    // Return the response data
+    return response.data;
+  } catch (error) {
+    // Handle any errors that occur during the lookup process
+    console.error("Error looking up payment status:", error);
+    throw error;
+  }
+};
+
 export const pay = async (paymentId) => {
   try {
     const { data } = await axios.put("/api/orders/pay", { paymentId });
@@ -77,6 +101,37 @@ export const getAllOrdersAdmin = async () => {
   }
 };
 
+export const getUserOrders = async (userId) => {
+  try {
+    const { data } = await axios.get(`/api/orders/delivered-orders/${userId}`);
+    return data;
+  } catch (error) {
+    console.error("Error fetching user orders:", error);
+    throw error;
+  }
+};
+
+export const submitRatingsToBackend = async (ratingsData) => {
+  try {
+    // Make a POST request to your backend API endpoint
+    const response = await axios.put("/api/orders/submit-rating", {
+      ratings: ratingsData,
+    });
+
+    // Handle success response if needed
+    console.log("Ratings submitted successfully:", response.data);
+
+    // Optionally, return the response data or any other indication of success
+    return response.data;
+  } catch (error) {
+    // Handle error
+    console.error("Failed to submit ratings:", error);
+
+    // Optionally, rethrow the error to handle it in the calling code
+    throw error;
+  }
+};
+
 export const fetchDeliveryStatuses = async () => {
   try {
     const response = await axios.get("/api/orders/config/delivery-statuses"); // Adjust the URL as needed
@@ -94,7 +149,6 @@ export const updateDeliveryStatus = async (orderId, deliveryStatus) => {
       { deliveryStatus }
     );
     return response.data;
-    
   } catch (error) {
     console.error("Failed to update delivery status:", error);
     throw error;

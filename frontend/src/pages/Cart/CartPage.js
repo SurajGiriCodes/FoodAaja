@@ -52,7 +52,13 @@ export default function CartPage() {
 
   return (
     <>
-      <Title title="Cart Page" margin="1.5rem 0 0 2.5rem" marginLeft="20px" />
+      <Title
+        title="Cart Page"
+        margin="1.5rem 0 0 2.5rem"
+        marginLeft="20px"
+        marginTop="20px"
+        marginBottom="20px"
+      />
       {cart && cart.items.length > 0 && (
         <div className={classes.container}>
           <ul className={classes.list}>

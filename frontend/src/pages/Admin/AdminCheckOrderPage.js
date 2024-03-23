@@ -6,6 +6,8 @@ import {
   updateDeliveryStatus,
 } from "../../services/OrderService";
 import Title from "../../Component/Title/Title";
+import { getAll } from "../../services/foodService";
+import moment from "moment";
 
 const AdminCheckOrderPage = () => {
   const [orders, setOrders] = useState([]);
@@ -13,6 +15,17 @@ const AdminCheckOrderPage = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [currentEditingOrder, setCurrentEditingOrder] = useState(null);
   const [selectedStatus, setSelectedStatus] = useState("");
+  const [restaurants, setRestaurants] = useState([]);
+
+  useEffect(() => {
+    getAll()
+      .then((data) => {
+        setRestaurants(data);
+      })
+      .catch((error) => {
+        console.error("Failed to fetch restaurants:", error);
+      });
+  }, []);
 
   useEffect(() => {
     const initFetch = async () => {
@@ -25,7 +38,7 @@ const AdminCheckOrderPage = () => {
     };
 
     initFetch();
-  }, []); // Empty dependency array means this effect runs once on mount
+  }, []);
 
   useEffect(() => {
     // Fetch orders
@@ -54,6 +67,78 @@ const AdminCheckOrderPage = () => {
     }
   };
 
+  const expandedRowRender = (record) => {
+    const itemColumns = [
+      { title: "Item Name", dataIndex: ["food", "name"], key: "name" },
+      {
+        title: "Restaurant",
+        key: "restaurant",
+        render: (text, record) => {
+          const restaurantId = record.food.restaurantId;
+          const restaurant = restaurants.find((r) => r._id === restaurantId);
+          return restaurant ? restaurant.name : "Unknown";
+        },
+      },
+      { title: "Quantity", dataIndex: "quantity", key: "quantity" },
+      {
+        title: "Customization",
+        key: "customization",
+        render: (text, record) => (
+          <>
+            {record.Customization.map((cust, index) => (
+              <div key={index} style={{ margin: "5px 0", paddingLeft: "15px" }}>
+                {index + 1}. {cust.customizationDetails}
+              </div>
+            ))}
+          </>
+        ),
+      },
+      {
+        title: "Add-ins",
+        key: "addIns",
+        render: (text, record) => {
+          let counter = 0;
+          const allAddIns = record.Customization.flatMap((cust) =>
+            cust.addIns.map((addIn) => ({
+              ...addIn,
+              number: ++counter,
+            }))
+          );
+          return (
+            <>
+              {allAddIns.map(({ name, price, number }) => (
+                <div
+                  key={number}
+                  style={{ margin: "5px 0", paddingLeft: "15px" }}
+                >
+                  {number}. {name} - Rs {price}
+                </div>
+              ))}
+            </>
+          );
+        },
+      },
+    ];
+
+    return (
+      <div>
+        <p>Order ID: {record._id}</p>
+        <p>Customer Name: {record.name}</p>
+        <p>Address: {record.address}</p>
+        <p>
+          Date & Time: {moment(record.createdAt).format("YYYY-MM-DD HH:mm:ss")}
+        </p>
+        <p>Total Price: Rs {record.totalPrice}</p>
+        <Table
+          columns={itemColumns}
+          dataSource={record.items}
+          pagination={false}
+          size="small"
+        />
+      </div>
+    );
+  };
+
   const columns = [
     {
       title: "Order ID",
@@ -76,12 +161,7 @@ const AdminCheckOrderPage = () => {
       key: "dateAndTime",
       render: (text) => new Date(text).toLocaleString(), // Format date and time nicely
     },
-    {
-      title: "Items",
-      key: "items",
-      dataIndex: "items",
-      render: (items) => items.map((item) => item.food.name).join(", "),
-    },
+
     {
       title: "Total Price",
       dataIndex: "totalPrice",
@@ -137,8 +217,8 @@ const AdminCheckOrderPage = () => {
       <Title
         title="Order Delivery Status"
         fontSize="1.6rem"
-        marginBottom="20px"
-        marginTop="20px"
+        marginBottom="10px"
+        marginTop="87px"
         marginLeft="40px"
       />
       <div style={{ margin: "20px", padding: "20px" }}>
@@ -146,6 +226,10 @@ const AdminCheckOrderPage = () => {
           columns={columns}
           dataSource={orders}
           rowKey="_id"
+          expandable={{
+            expandedRowRender,
+            rowExpandable: (record) => true, // You can specify conditions here
+          }}
           pagination={{
             pageSize: 6,
             // Other pagination settings...
