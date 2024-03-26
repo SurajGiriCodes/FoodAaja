@@ -63,7 +63,7 @@ export default function HomePage() {
           padding: "20px",
           marginLeft: "20px",
           display: "flex",
-          flexDirection: "column", // Adjust the main axis to vertical
+          flexDirection: "column",
           alignItems: "center",
         }}
       >
