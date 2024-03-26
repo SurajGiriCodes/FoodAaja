@@ -39,12 +39,27 @@ router.get(
   })
 );
 
-// Payment initiation route
+router.get(
+  "/allOrders",
+  handler(async (req, res) => {
+    try {
+      // Fetch all orders without requiring authentication
+      const orders = await OrderModel.find({})
+        .populate("user", "name email")
+        .sort("-createdAt");
+      res.json(orders);
+    } catch (error) {
+      console.error("Error fetching all orders:", error);
+      res.status(500).send("Internal Server Error");
+    }
+  })
+);
+
 router.post(
   "/initiate-payment",
   auth,
   handler(async (req, res) => {
-    const { amount, orderId, CustomerName } = req.body; // Ensure amount is in paisa and you have an orderId
+    const { amount, orderId, CustomerName } = req.body;
     const returnUrl = `http://localhost:3000/track/${orderId}`;
 
     const data = {
@@ -149,9 +164,8 @@ router.get(
   })
 );
 
-// Example in your restaurant route file
 router.get("/filtered", async (req, res) => {
-  const { maxPrice } = req.query; // Assuming filtering based on maximum price
+  const { maxPrice } = req.query;
   const restaurants = await RestaurantModel.find({})
     .populate({
       path: "menu",
@@ -192,19 +206,16 @@ router.get(
   handler(async (req, res) => {
     try {
       const userId = req.params.userId;
-
-      // Find the delivered orders for the specified user ID
       const deliveredOrders = await OrderModel.find({
         user: userId,
         deliveryStatus: "Delivered",
+        "items.rating": null,
       })
-        .sort({ createdAt: -1 }) // Sort by createdAt field in descending order
-        .populate("items.food", "name price menuImageUrl"); // Populate food details for each item
+        .sort({ createdAt: -1 })
+        .populate("items.food", "name price menuImageUrl");
 
       if (!deliveredOrders || deliveredOrders.length === 0) {
-        return res
-          .status(404)
-          .json({ message: "No delivered orders found for the user" });
+        return res.json([]);
       }
 
       res.json(deliveredOrders);
@@ -275,13 +286,11 @@ router.get("/config/delivery-statuses", (req, res) => {
   res.json(DeliveryStatus);
 });
 
-// In your orders routes file (e.g., routes/orders.js)
 router.put("/update-delivery-status/:orderId", async (req, res) => {
   try {
     const { orderId } = req.params;
     const { deliveryStatus } = req.body;
 
-    // First, find the current order to check its status before updating
     const currentOrder = await OrderModel.findById(orderId);
 
     if (!currentOrder) {

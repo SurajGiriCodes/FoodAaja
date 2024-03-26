@@ -5,9 +5,8 @@ export const RestaurantSchema = new Schema(
   {
     name: { type: String, required: true },
     location: { type: String, required: true },
-    rating: { type: Number, required: true },
+    rating: { type: Number, default: 3.5 },
     restaurantImageUrl: { type: String, required: true },
-    stars: { type: Number, default: 3 },
     menu: [FoodModel.schema],
   },
   {

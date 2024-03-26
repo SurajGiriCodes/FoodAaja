@@ -9,9 +9,8 @@ export default function OrdersPageAdmin() {
   const { RangePicker } = DatePicker;
   const [orders, setOrders] = useState([]);
   const [restaurants, setRestaurants] = useState([]);
-  const [selectedRestaurantId, setSelectedRestaurantId] = useState(
-    "655888c75ed611910064db69"
-  );
+  const [selectedRestaurantId, setSelectedRestaurantId] = useState("");
+
   const [selectedDateRange, setSelectedDateRange] = useState([
     moment("2024-03-01", "YYYY-MM-DD").toDate(), // Default start date
     moment("2024-03-30", "YYYY-MM-DD").toDate(),
@@ -22,6 +21,9 @@ export default function OrdersPageAdmin() {
     getAll()
       .then((data) => {
         setRestaurants(data);
+        if (data.length > 0) {
+          setSelectedRestaurantId(data[0]._id);
+        }
       })
       .catch((error) => {
         console.error("Failed to fetch restaurants:", error);

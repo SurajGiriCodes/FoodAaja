@@ -145,6 +145,11 @@ export const getAllTags = async (restaurantId) => {
   return data;
 };
 
+export const getAllRestaurantIds = async (restaurantId) => {
+  const { data } = await axios.get("/api/restaurants/all-restaurant-ids");
+  return data;
+};
+
 export const getFilteredRestaurants = async (maxPrice) => {
   try {
     const response = await fetch(
@@ -179,5 +184,16 @@ export const searchFoodItems = async (searchTerm, minPrice, maxPrice) => {
     // Log and rethrow the error for the calling component to handle
     console.error("Error searching food items:", error);
     throw error;
+  }
+};
+
+export const updateRestaurantRatings = async (restaurantRatings) => {
+  try {
+    const response = await axios.put(`/api/restaurants/updateRatings`, {
+      restaurantRatings,
+    });
+    return response.data;
+  } catch (error) {
+    throw new Error(`Error updating restaurant ratings: ${error.message}`);
   }
 };

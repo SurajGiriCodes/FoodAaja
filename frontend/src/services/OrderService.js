@@ -25,29 +25,24 @@ export const initiatePayment = async (paymentDetails) => {
   }
 };
 
-// Define the lookupPaymentStatus function
-export const lookupPaymentStatus = async (orderId) => {
-  try {
-    // Make a request to the payment lookup endpoint
-    const response = await axios.post(
-      "/epayment/lookup/",
-      { orderId }, // Assuming orderId is the parameter required for the lookup
-      {
-        headers: {
-          Authorization: "Key d9d1a73af4364a73921020e145409c24", // Replace YOUR_AUTH_TOKEN with your actual authentication token
-          "Content-Type": "application/json",
-        },
-      }
-    );
-
-    // Return the response data
-    return response.data;
-  } catch (error) {
-    // Handle any errors that occur during the lookup process
-    console.error("Error looking up payment status:", error);
-    throw error;
-  }
-};
+// export const lookupPaymentStatus = async (orderId) => {
+//   try {
+//     const response = await axios.post(
+//       "/epayment/lookup/",
+//       { orderId },
+//       {
+//         headers: {
+//           Authorization: "Key d9d1a73af4364a73921020e145409c24",
+//           "Content-Type": "application/json",
+//         },
+//       }
+//     );
+//     return response.data;
+//   } catch (error) {
+//     console.error("Error looking up payment status:", error);
+//     throw error;
+//   }
+// };
 
 export const pay = async (paymentId) => {
   try {
@@ -91,6 +86,11 @@ export const getAllStatus = async () => {
   return data;
 };
 
+export const getAllOrdersOfAllUsers = async () => {
+  const { data } = await axios.get("/api/orders/allOrders");
+  return data;
+};
+
 export const getAllOrdersAdmin = async () => {
   try {
     const { data } = await axios.get("/api/orders");
@@ -113,28 +113,20 @@ export const getUserOrders = async (userId) => {
 
 export const submitRatingsToBackend = async (ratingsData) => {
   try {
-    // Make a POST request to your backend API endpoint
     const response = await axios.put("/api/orders/submit-rating", {
       ratings: ratingsData,
     });
-
-    // Handle success response if needed
     console.log("Ratings submitted successfully:", response.data);
-
-    // Optionally, return the response data or any other indication of success
     return response.data;
   } catch (error) {
-    // Handle error
     console.error("Failed to submit ratings:", error);
-
-    // Optionally, rethrow the error to handle it in the calling code
     throw error;
   }
 };
 
 export const fetchDeliveryStatuses = async () => {
   try {
-    const response = await axios.get("/api/orders/config/delivery-statuses"); // Adjust the URL as needed
+    const response = await axios.get("/api/orders/config/delivery-statuses");
     return response.data;
   } catch (error) {
     console.error("Failed to fetch delivery statuses:", error);

@@ -14,15 +14,16 @@ import {
 export default function AdminThumbnailsComponent() {
   const [restaurant, setRestaurant] = useState([]);
   const [selectedRestaurant, setSelectedRestaurant] = useState(null);
+  const [selectedRestaurantId, setSelectedRestaurantId] = useState(null);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
+  const [form] = Form.useForm();
 
   useEffect(() => {
     getAll().then((restaurant) => {
       setRestaurant(restaurant);
     });
   }, []);
-
-  const [isModalVisible, setIsModalVisible] = useState(false);
-  const [form] = Form.useForm();
 
   const showModal = () => {
     setIsModalVisible(true);
@@ -38,6 +39,12 @@ export default function AdminThumbnailsComponent() {
     });
     setSelectedRestaurant(restaurant);
     setIsModalVisible(true);
+  };
+
+  const showDeleteModal = (restaurantId) => {
+    console.log(restaurantId);
+    setSelectedRestaurantId(restaurantId);
+    setIsDeleteModalVisible(true);
   };
 
   const handleCancel = () => {
@@ -83,6 +90,7 @@ export default function AdminThumbnailsComponent() {
   };
 
   const handleRemove = async (restaurantId) => {
+    console.log("handleRemove", restaurantId);
     try {
       await deleteRestaurant(restaurantId);
       // Re-fetch the restaurant list
@@ -184,7 +192,8 @@ export default function AdminThumbnailsComponent() {
                       size="small"
                       onClick={(e) => {
                         e.stopPropagation();
-                        handleRemove(restaurant._id);
+                        showDeleteModal(restaurant._id);
+                        // handleRemove(restaurant._id);
                       }}
                     >
                       Delete Restaurant
@@ -206,27 +215,31 @@ export default function AdminThumbnailsComponent() {
         footer={null}
       >
         <Form form={form} onFinish={onFinish}>
-          <Form.Item label="Name" name="name" rules={[{ required: true }]}>
+          <Form.Item
+            label="Name"
+            name="name"
+            rules={[{ required: true, message: "Please input the name!" }]}
+          >
             <Input />
           </Form.Item>
           <Form.Item
             label="Location"
             name="location"
-            rules={[{ required: true }]}
+            rules={[{ required: true, message: "Please input the location!" }]}
           >
-            <Input />
-          </Form.Item>
-          <Form.Item label="Rating" name="rating" rules={[{ required: true }]}>
             <Input />
           </Form.Item>
           <Form.Item
             label="ImageUrl"
             name="restaurantImageUrl"
-            rules={[{ required: true }]}
+            rules={[
+              { required: true, message: "Please input the image URL!" },
+              {
+                type: "url",
+                message: "Please enter a valid URL for the image!",
+              },
+            ]}
           >
-            <Input />
-          </Form.Item>
-          <Form.Item label="Stars" name="stars" rules={[{ required: true }]}>
             <Input />
           </Form.Item>
           <Form.Item>
@@ -235,6 +248,31 @@ export default function AdminThumbnailsComponent() {
             </Button>
           </Form.Item>
         </Form>
+      </Modal>
+
+      {/* Delete Confirmation Modal */}
+      <Modal
+        title="Confirmation"
+        open={isDeleteModalVisible}
+        onCancel={() => setIsDeleteModalVisible(false)}
+        footer={[
+          <Button key="cancel" onClick={() => setIsDeleteModalVisible(false)}>
+            Cancel
+          </Button>,
+          <Button
+            key="delete"
+            type="primary"
+            danger
+            onClick={() => {
+              handleRemove(selectedRestaurantId);
+              setIsDeleteModalVisible(false);
+            }}
+          >
+            Delete
+          </Button>,
+        ]}
+      >
+        <p>Are you sure you want to delete this restaurant?</p>
       </Modal>
     </>
   );

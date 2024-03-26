@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import {  getByID } from "../../services/foodService";
+import { getByID } from "../../services/foodService";
 
 import classes from "../../pages/Menu/menu.module.css";
 import { Modal, Button, Form, Input, Select, notification, Space } from "antd";
@@ -16,15 +16,13 @@ export default function MenuPageAdmin() {
   const [resmenu, setResMenu] = useState({});
   const { restaurantId } = useParams();
   const [selectedFood, setSelectedFood] = useState(null);
-  const [restaurants, setRestaurants] = useState([]);
-  const [selectedRestaurantId, setSelectedRestaurantId] = useState(null);
+  const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
+  const [deleteFoodId, setDeleteFoodId] = useState(null);
 
   useEffect(() => {
     console.log("Restaurant ID:", restaurantId);
     getByID(restaurantId).then(setResMenu);
   }, [restaurantId]);
-
-  
 
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [form] = Form.useForm();
@@ -38,6 +36,12 @@ export default function MenuPageAdmin() {
     setIsModalVisible(true);
   };
 
+  const showDeleteModal = (foodId) => {
+    console.log(foodId);
+    setDeleteFoodId(foodId);
+    setIsDeleteModalVisible(true);
+  };
+
   useEffect(() => {
     if (!isModalVisible) {
       setSelectedFood(null);
@@ -48,6 +52,10 @@ export default function MenuPageAdmin() {
   const handleCancel = () => {
     setIsModalVisible(false);
     form.resetFields();
+  };
+
+  const handleDeleteCancel = () => {
+    setIsDeleteModalVisible(false);
   };
 
   const onFinish = async (values) => {
@@ -147,7 +155,7 @@ export default function MenuPageAdmin() {
                         <Button
                           type="primary"
                           danger
-                          onClick={() => handleDelete(food._id)}
+                          onClick={() => showDeleteModal(food._id)}
                           style={{ flex: 1, marginRight: "5px" }} // Added inline style here
                         >
                           Delete
@@ -290,6 +298,31 @@ export default function MenuPageAdmin() {
             </Button>
           </Form.Item>
         </Form>
+      </Modal>
+
+      {/* Delete Confirmation Modal */}
+      <Modal
+        title="Confirm Delete"
+        open={isDeleteModalVisible}
+        onCancel={handleDeleteCancel}
+        footer={[
+          <Button key="cancel" onClick={handleDeleteCancel}>
+            Cancel
+          </Button>,
+          <Button
+            key="delete"
+            type="primary"
+            danger
+            onClick={() => {
+              handleDelete(deleteFoodId);
+              setIsDeleteModalVisible(false);
+            }}
+          >
+            Delete
+          </Button>,
+        ]}
+      >
+        <p>Are you sure you want to delete this food item?</p>
       </Modal>
     </>
   );

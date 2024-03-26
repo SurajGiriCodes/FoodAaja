@@ -6,16 +6,66 @@ import { Modal, Rate, Button } from "antd";
 import {
   getUserOrders,
   submitRatingsToBackend,
+  getAllOrdersOfAllUsers,
 } from "../../services/OrderService";
+import {
+  getAllRestaurantIds,
+  updateRestaurantRatings,
+} from "../../services/foodService";
+import backgroundImage from "../../images/background.png";
 
 export default function Thumbnails({ restaurant }) {
-  const [orders, setOrders] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [recentOrder, setRecentOrder] = useState(null);
   const [ratings, setRatings] = useState({});
 
   useEffect(() => {
-    // Fetch orders
+    const fetchRestaurantIdAndData = async () => {
+      try {
+        const RestaurantIds = await getAllRestaurantIds();
+        const allRestaurantIds = [];
+        RestaurantIds.forEach((restaurant) => {
+          allRestaurantIds.push(restaurant._id);
+        });
+
+        const orders = await getAllOrdersOfAllUsers();
+        const foodItemsByRestaurant = [];
+        orders.forEach((order) => {
+          order.items.forEach((item) => {
+            const { food, rating } = item;
+
+            if (
+              rating !== null &&
+              allRestaurantIds.includes(food.restaurantId)
+            ) {
+              const restaurantId = food.restaurantId;
+              if (!foodItemsByRestaurant[restaurantId]) {
+                foodItemsByRestaurant[restaurantId] = [];
+              }
+              foodItemsByRestaurant[restaurantId].push({ food, rating });
+            }
+          });
+        });
+        const restaurantRatings = {};
+        for (const restaurantId in foodItemsByRestaurant) {
+          const items = foodItemsByRestaurant[restaurantId];
+          const totalRating = items.reduce((acc, curr) => acc + curr.rating, 0);
+          const averageRating = totalRating / items.length;
+          restaurantRatings[restaurantId] = averageRating;
+        }
+
+        console.log(restaurantRatings);
+
+        await updateRestaurantRatings(restaurantRatings);
+      } catch (error) {
+        console.error("Error fetching orders:", error);
+      }
+    };
+
+    fetchRestaurantIdAndData();
+  }, []);
+
+  useEffect(() => {
     const fetchOrders = async () => {
       try {
         const userString = localStorage.getItem("user");
@@ -26,8 +76,8 @@ export default function Thumbnails({ restaurant }) {
           return;
         }
         const response = await getUserOrders(userId);
-        setOrders(response);
         const mostRecentOrder = response[0];
+        console.log(mostRecentOrder);
         if (mostRecentOrder) {
           setRecentOrder(mostRecentOrder);
           setModalVisible(true);
@@ -73,41 +123,58 @@ export default function Thumbnails({ restaurant }) {
   };
   return (
     <>
-      <ul className={classes.list}>
-        {restaurant.map((restaurant) => (
-          <li key={restaurant.id}>
-            <Link
-              to={`/menu/${restaurant.id}`}
-              className={classes.clickableArea}
-            >
-              <img
-                className={classes.image}
-                src={restaurant.restaurantImageUrl}
-                alt={restaurant.name}
-              />
+      <div className={classes.container}>
+        <div
+          className={classes.background}
+          style={{
+            backgroundImage: `url(${backgroundImage})`,
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            zIndex: -1,
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            opacity: 0.5,
+          }}
+        ></div>
+        <ul className={classes.list}>
+          {restaurant.map((restaurant) => (
+            <li key={restaurant.id}>
+              <Link
+                to={`/menu/${restaurant.id}`}
+                className={classes.clickableArea}
+              >
+                <img
+                  className={classes.image}
+                  src={restaurant.restaurantImageUrl}
+                  alt={restaurant.name}
+                />
 
-              <div className={classes.content}>
-                <div className={classes.name}>{restaurant.name}</div>
-                <span
-                  className={`${classes.favorite} ${
-                    restaurant.favorite ? "" : classes.not
-                  }`}
-                >
-                  ❤
-                </span>
-                <div className={classes.stars}>
-                  <StarRating stars={restaurant.stars} />
-                </div>
-                <div className={classes.product_item_footer}>
-                  <div className={classes.origins}>
-                    <span>{restaurant.location}</span>
+                <div className={classes.content}>
+                  <div className={classes.name}>{restaurant.name}</div>
+                  <span
+                    className={`${classes.favorite} ${
+                      restaurant.favorite ? "" : classes.not
+                    }`}
+                  >
+                    ❤
+                  </span>
+                  <div className={classes.stars}>
+                    <StarRating stars={restaurant.rating} />
+                  </div>
+                  <div className={classes.product_item_footer}>
+                    <div className={classes.origins}>
+                      <span>{restaurant.location}</span>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </Link>
-          </li>
-        ))}
-      </ul>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </div>
       <Modal
         title="Please give your Rating"
         open={modalVisible}

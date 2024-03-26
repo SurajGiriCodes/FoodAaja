@@ -1,10 +1,6 @@
 import { connect, set } from "mongoose";
 import { UserModel } from "../models/user.model.js";
-import { sample_users } from "../data.js";
-import { sample_restaurants } from "../data.js";
-import { RestaurantModel } from "../models/restrurent.model.js";
 import bcrypt from "bcryptjs";
-import { model, Schema } from "mongoose";
 
 const PASSWORD_HASH_SALT_ROUNDS = 10;
 

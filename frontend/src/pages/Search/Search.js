@@ -5,7 +5,7 @@ import classes from "./search.module.css";
 Search.defaultProps = {
   searchRoute: "/search/",
   defaultRoute: "/",
-  placeholder: "Search Restaurent!",
+  placeholder: "Search Restaurent",
 };
 
 export default function Search({

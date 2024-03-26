@@ -102,7 +102,7 @@ export default function HomePage() {
           {/* Container for search input and button */}
           <Input
             style={{ flex: 1 }}
-            placeholder="Search by type category"
+            placeholder="Search food items!!"
             value={searchTerm1}
             onChange={(e) => setSearchTerm1(e.target.value)}
           />

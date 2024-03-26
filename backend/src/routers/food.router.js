@@ -2,6 +2,7 @@ import { Router } from "express";
 import { RestaurantModel } from "../models/restrurent.model.js";
 import { FoodModel } from "../models/food.model.js";
 import handler from "express-async-handler";
+import mongoose from "mongoose";
 
 const router = Router();
 router.get("/searchFoodItems", async (req, res) => {
@@ -81,11 +82,42 @@ router.post("/restaurants", async (req, res) => {
   }
 });
 
+router.put("/updateRatings", async (req, res) => {
+  try {
+    const { restaurantRatings } = req.body;
+
+    // Iterate over each restaurant rating entry
+    for (const [restaurantId, rating] of Object.entries(restaurantRatings)) {
+      //Convert the string restaurantId to an ObjectId
+      const objectId = new mongoose.Types.ObjectId(restaurantId);
+
+      // Find the restaurant
+      const restaurant = await RestaurantModel.findOne({ _id: objectId });
+
+      //Update restaurant rating
+      restaurant.rating = rating;
+      await restaurant.save();
+    }
+    res.json({ message: "Restaurant ratings updated successfully" });
+  } catch (error) {
+    console.error("Error updating restaurant ratings:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+});
+
 router.get(
   "/",
   handler(async (req, res) => {
     const restaurants = await RestaurantModel.find({});
     res.send(restaurants);
+  })
+);
+
+router.get(
+  "/all-restaurant-ids",
+  handler(async (req, res) => {
+    const restaurantIds = await RestaurantModel.find({}, "_id");
+    res.json(restaurantIds);
   })
 );
 

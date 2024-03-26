@@ -8,7 +8,7 @@
   margin-top: 60px;
 }
 
-/* .list li a {
+.list li a {
   height: 22.5rem;
   width: 20rem;
   border: 1px solid whitesmoke;
@@ -20,13 +20,22 @@
   color: #e72929;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
   transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55);
-} */
+}
 .list li a:hover {
   transform: translateY(-10px);
 }
 .image {
   object-fit: cover;
   height: 14.5rem;
+}
+
+.stars {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.name {
+  font-size: 19px;
 }
 
 .content {
