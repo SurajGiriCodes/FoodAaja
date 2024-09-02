@@ -18,6 +18,8 @@ export default function OrderTrackPage() {
   const navigate = useNavigate();
   const location = useLocation();
 
+  console.log(order);
+
   // Extract query parameters from URL
   const queryParams = queryString.parse(location.search);
 
@@ -35,7 +37,7 @@ export default function OrderTrackPage() {
         try {
           const orderId = await pay(purchase_order_id);
           clearCart();
-          toast.success("Payment Saved Successfully", "Success");
+          toast.success("Order Saved Successfully", "Success");
           navigate(location.pathname, { replace: true });
         } catch (error) {
           toast.error("Payment processing failed", "Error");

@@ -163,6 +163,16 @@ button:hover {
   outline: none;
 }
 
+@media screen and (max-width: 600px) {
+  .container input {
+    width: 15rem; /* Decrease the width of the input field */
+  }
+
+  .container button {
+    width: 4rem; /* Decrease the width of the button */
+  }
+}
+
 .container button:hover {
   opacity: 1;
   cursor: pointer;
@@ -262,6 +272,44 @@ button:hover {
   cursor: pointer; /* Indicate clickable checkbox */
 }
 
+/* For Modal */
+.budgetFilterContainerInsideRecommendationModel {
+  margin-top: 2rem; /* Space from the recommendation content */
+  padding: 1rem;
+}
+
+.budgetFilterContainerInsideRecommendationModel h4 {
+  margin-bottom: 1rem;
+  color: #333;
+  font-size: 1.2rem;
+}
+
+.budgetFilterContainerInsideRecommendationModel div {
+  margin-bottom: 0.5rem;
+}
+
+.budgetFilterContainerInsideRecommendationModel input[type="checkbox"] {
+  margin-right: 0.5rem;
+}
+
+.budgetFilterContainerInsideRecommendationModel label {
+  margin: 0;
+  font-size: 1rem;
+  color: #666; /* Darker text for better readability */
+  cursor: pointer; /* Indicate clickable label */
+}
+
+/* Styling for checkboxes */
+.budgetFilterContainerInsideRecommendationModel
+  input[type="checkbox"]:checked
+  + label {
+  color: #0056b3; /* Highlight color when checked */
+}
+
+.budgetFilterContainerInsideRecommendationModel input[type="checkbox"] {
+  cursor: pointer; /* Indicate clickable checkbox */
+}
+
 .showFilterButton {
   display: none; /* Hide by default */
 }
@@ -335,5 +383,227 @@ button:hover {
 @media screen and (max-width: 900px) {
   .menuSection {
     margin-right: 77px; /* Adjust the margin as needed */
+  }
+}
+
+.container .coolButton {
+  background: linear-gradient(to right, #f857a6, #ff5858);
+  color: #fff;
+  font-size: 14px;
+  font-weight: bold;
+  border: none;
+  border-radius: 30px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  margin-left: 10px;
+  width: 140px;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+.container .coolButton:before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    120deg,
+    rgba(255, 255, 255, 0.6),
+    rgba(255, 255, 255, 0.2)
+  );
+  transition: all 0.5s ease;
+}
+
+.container .coolButton:hover:before {
+  left: 100%;
+}
+
+.container .coolButton:hover {
+  box-shadow: 0 12px 20px rgba(0, 0, 0, 0.4);
+  transform: translateY(-3px);
+}
+
+.container .BudgetFiltering {
+  background: linear-gradient(to right, #4d94ff, #0066ff);
+  color: #fff;
+  font-size: 14px;
+  font-weight: bold;
+  border: none;
+  border-radius: 30px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  margin-left: 10px;
+  width: 140px;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+.buttonContainer {
+  display: flex;
+  justify-content: space-between;
+}
+
+.container .BudgetFiltering:before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    120deg,
+    rgba(255, 255, 255, 0.6),
+    rgba(255, 255, 255, 0.2)
+  );
+  transition: all 0.5s ease;
+}
+
+.container .BudgetFiltering:hover:before {
+  left: 100%;
+}
+
+.container .BudgetFiltering:hover {
+  box-shadow: 0 12px 20px rgba(0, 0, 0, 0.4);
+  transform: translateY(-3px);
+}
+
+/* // */
+
+.modalContainer {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.modalContainer .singleRecommendation {
+  display: flex;
+  align-items: center;
+}
+
+.modalContainer .menuItem {
+  display: flex;
+  padding: 20px;
+}
+
+.modalContainer .imgClass {
+  width: 150px;
+  height: 150px;
+  margin-right: 20px;
+}
+
+.modalContainer .itemsInfo {
+  flex-grow: 1;
+}
+
+.modalContainer .itemName {
+  font-size: 18px;
+  margin-bottom: 5px;
+}
+
+.modalContainer .itemPrice {
+  font-size: 16px;
+  color: #f857a6;
+}
+
+.modalContainer .itemDescription {
+  margin-top: 10px;
+}
+
+.modalContainer .addToCartButton {
+  background-color: #c08de7;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  padding: 8px 16px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.modalContainer .addToCartButton:hover {
+  background-color: #ff5858;
+}
+
+@media (max-width: 900px) {
+  .container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-top: 3rem;
+    margin-bottom: 3rem;
+  }
+
+  .searchContainer {
+    display: flex;
+    align-items: center;
+  }
+
+  .buttonContainer {
+    margin-top: 10px; /* Adjust margin as needed */
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .container .buttonContainer {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .container .coolButton,
+  .container .BudgetFiltering {
+    margin: 10px 0; /* Adjust margin for smaller screens */
+    width: 120px; /* Decrease button width for smaller screens */
+    height: 40px; /* Decrease button height for smaller screens */
+    font-size: 12px; /* Decrease font size for smaller screens */
+    padding: 5px 10px; /* Adjust padding for smaller screens */
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .modalContainer {
+    max-width: 80%; /* Adjust maximum width for smaller screens */
+  }
+
+  .modalContainer .singleRecommendation {
+    flex-direction: column; /* Adjust layout for smaller screens */
+    align-items: center;
+  }
+
+  .modalContainer .imgClass {
+    width: 100%; /* Make image width 100% for smaller screens */
+    height: auto; /* Automatically adjust image height */
+    margin-right: 0; /* Remove margin for smaller screens */
+    margin-bottom: 10px; /* Add some bottom margin for spacing */
+  }
+
+  .modalContainer .menuItem {
+    padding: 10px; /* Adjust padding for smaller screens */
+  }
+
+  .modalContainer .itemsInfo {
+    text-align: center; /* Center align text for smaller screens */
+  }
+
+  .modalContainer .itemName {
+    font-size: 16px; /* Decrease font size for smaller screens */
+  }
+
+  .modalContainer .itemPrice {
+    font-size: 14px; /* Decrease font size for smaller screens */
+  }
+
+  .modalContainer .itemDescription {
+    margin-top: 5px; /* Adjust margin for smaller screens */
+  }
+
+  .modalContainer .addToCartButton {
+    font-size: 12px; /* Decrease font size for smaller screens */
+    padding: 6px 12px; /* Adjust padding for smaller screens */
   }
 }

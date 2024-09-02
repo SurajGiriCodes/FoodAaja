@@ -45,6 +45,8 @@
   border: 1px solid #d4d4d4;
   border-radius: 1rem;
   margin-top: 2rem;
+  border: 1px solid green; /* Change border color to green */
+  box-shadow: 0px 0px 10px lightgreen;
 }
 
 .order_summary > * {

@@ -79,7 +79,7 @@ router.post(
         data,
         {
           headers: {
-            Authorization: "Key d9d1a73af4364a73921020e145409c24",
+            Authorization: `Key ${process.env.KHALTI_TEST_SECRET_KEY}`,
             "Content-Type": "application/json",
           },
         }

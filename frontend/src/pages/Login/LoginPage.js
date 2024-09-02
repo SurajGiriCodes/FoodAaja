@@ -27,8 +27,6 @@ export default function LoginPage() {
     <div className={classes.container}>
       <div className={classes.details}>
         <Title title="Login" marginBottom="20px" marginTop="20px" />
-
-        {/* // handleSubmit check validation error and pass data to submit function defult, noValidate==disable */}
         <form onSubmit={handleSubmit(submit)} noValidate>
           <Input
             type="email"

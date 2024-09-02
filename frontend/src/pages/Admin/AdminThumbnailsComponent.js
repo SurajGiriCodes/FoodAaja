@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
 import StarRating from "../../Component/StarRating/StarRating";
 import classes from "../../Component/Thumbnails/thumbnails.module.css";
 import { Modal, Button, Form, Input, notification } from "antd";
@@ -13,11 +12,33 @@ import {
 
 export default function AdminThumbnailsComponent() {
   const [restaurant, setRestaurant] = useState([]);
+
   const [selectedRestaurant, setSelectedRestaurant] = useState(null);
   const [selectedRestaurantId, setSelectedRestaurantId] = useState(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
   const [form] = Form.useForm();
+
+  const [searchTerm, setSearchTerm] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const handleSearchChange = (event) => {
+    setSearchTerm(event.target.value);
+  };
+
+  const handleSearchSubmit = () => {
+    setSearchQuery(searchTerm);
+  };
+
+  const handleKeyDown = (event) => {
+    if (event.key === "Enter") {
+      document.getElementById("searchButton").click();
+    }
+  };
+
+  const filteredRestaurants = restaurant.filter((r) =>
+    r.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   useEffect(() => {
     getAll().then((restaurant) => {
@@ -127,8 +148,26 @@ export default function AdminThumbnailsComponent() {
           Add Restaurants
         </Button>
       </div>
+      <div style={styles.container}>
+        <input
+          type="text"
+          placeholder="Search restaurants..."
+          value={searchTerm}
+          onChange={handleSearchChange}
+          onKeyDown={handleKeyDown}
+          style={styles.searchInput}
+        />
+        <button
+          type="button"
+          onClick={handleSearchSubmit}
+          style={styles.searchButton}
+          id="searchButton"
+        >
+          Search
+        </button>
+      </div>
       <ul className={classes.list}>
-        {restaurant.map((restaurant) => (
+        {filteredRestaurants.map((restaurant) => (
           <li key={restaurant.id}>
             <div
               onClick={() => goToAdminMenu(restaurant.id)}
@@ -277,3 +316,56 @@ export default function AdminThumbnailsComponent() {
     </>
   );
 }
+
+const styles = {
+  container: {
+    display: "flex",
+    justifyContent: "center",
+    marginTop: "3rem",
+    marginBottom: "1.5rem",
+
+    "@media screen and (max-width: 1200px)": {
+      marginLeft: "20px",
+    },
+  },
+  searchInput: {
+    borderRadius: "10rem 0 0 10rem",
+    border: "none",
+    height: "3rem",
+    width: "20rem",
+    backgroundColor: "#f1f1f1",
+    padding: "1.2rem",
+    fontSize: "1rem",
+    fontWeight: "500",
+    outline: "none",
+    "@media screen and (max-width: 600px)": {
+      width: "15rem",
+    },
+  },
+  searchButton: {
+    color: "grey",
+    height: "3rem",
+    width: "5rem",
+    fontSize: "1rem",
+    borderRadius: "0 10rem 10rem 0",
+    border: "none",
+    backgroundColor: "#5656ff",
+    color: "white",
+    opacity: "0.8",
+    outline: "none",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    cursor: "pointer",
+    marginTop: "-1px",
+    marginLeft: "-2px",
+    "@media screen and (max-width: 600px)": {
+      width: "4rem",
+      padding: "3px 8px",
+      fontSize: "0.8rem",
+    },
+  },
+  searchIcon: {
+    marginRight: "6px",
+  },
+};

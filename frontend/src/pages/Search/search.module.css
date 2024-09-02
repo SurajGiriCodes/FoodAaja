@@ -5,6 +5,11 @@
   margin-bottom: 1.5rem;
   margin-left: 233px;
 }
+@media screen and (max-width: 1200px) {
+  .container {
+    margin-left: 20px; /* Adjusted margin left for smaller screens */
+  }
+}
 
 .container input {
   border-radius: 10rem 0 0 10rem;
@@ -31,6 +36,24 @@
   outline: none;
 }
 
+@media screen and (max-width: 600px) {
+  .container input {
+    width: 15rem; /* Decrease the width for smaller screens */
+  }
+
+  .container button {
+    width: 4rem; /* Decrease the width for smaller screens */
+  }
+}
+
+@media screen and (max-width: 600px) {
+  button {
+    /* Decrease the size and text size of the button */
+    padding: 3px 8px; /* Adjust padding for smaller screens */
+    font-size: 0.8rem; /* Decrease font size for smaller screens */
+  }
+}
+
 .container button:hover {
   opacity: 1;
   cursor: pointer;
@@ -39,4 +62,12 @@
 .container button {
   margin: 0;
   padding: 0;
+}
+
+@media (max-width: 650px) {
+  .container > div {
+    flex-direction: column;
+    margin-top: 0px;
+    margin-bottom: -40px;
+  }
 }

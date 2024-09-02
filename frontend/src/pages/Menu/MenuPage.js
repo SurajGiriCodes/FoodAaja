@@ -26,6 +26,21 @@ export default function MenuPage({ margin }) {
   const [currentWeather, setCurrentWeather] = useState(null);
   const [currentTime, setCurrentTime] = useState(new Date()); // Stores the current time
   const [recommendedItems, setRecommendedItems] = useState([]);
+  const [screenWidth, setScreenWidth] = useState(window.innerWidth);
+  const [isBudgetFilterModalVisible, setIsBudgetFilterModalVisible] =
+    useState(false);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setScreenWidth(window.innerWidth);
+    };
+
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
 
   useEffect(() => {
     navigator.geolocation.getCurrentPosition(
@@ -98,7 +113,7 @@ export default function MenuPage({ margin }) {
     console.log("Time of Day:", getTimeOfDay());
     console.log("Weather Condition:", mapWeatherToCondition(currentWeather));
 
-    const weatherCondition = mapWeatherToCondition(currentWeather); // Implement based on your criteria, such as temperature and weather type
+    const weatherCondition = mapWeatherToCondition(currentWeather); // Implement based on our criteria, such as temperature and weather type
     const newRecommendations = resMenu.menu.filter((item) => {
       const matchesTime = item.tags.includes(timeOfDay);
       const matchesWeather = item.category.some(
@@ -110,7 +125,7 @@ export default function MenuPage({ margin }) {
     console.log(
       "Recommended items based on current weather and time:",
       newRecommendations
-    ); // Log the recommended items
+    );
     setRecommendedItems(newRecommendations);
   };
 
@@ -211,6 +226,14 @@ export default function MenuPage({ margin }) {
     setFilteredMenu(filtered);
   }, [searchTerm, selectedTag, resMenu.menu, selectedBudgetRanges]); // Add selectedBudgetRanges to the dependency array
 
+  const handleButtonClick = () => {
+    setIsModalVisible(true);
+  };
+
+  const handleBudgetFilterButtonClick = () => {
+    setIsBudgetFilterModalVisible(true);
+  };
+
   return (
     <div className={classes.mainContainer}>
       <section className={classes.menuSection}>
@@ -219,33 +242,52 @@ export default function MenuPage({ margin }) {
           <h2 className={classes.menuTitle}>Menu</h2>
           <div className={classes.underline}></div>
         </div>
+
         <div className={classes.container} style={{ margin }}>
-          <input
-            type="text"
-            placeholder="Search menu items"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            onKeyDown={(e) =>
-              e.key === "Enter" &&
-              setFilteredMenu(
-                resMenu.menu.filter((food) =>
-                  food.name.toLowerCase().includes(searchTerm.toLowerCase())
+          <div className={classes.searchContainer}>
+            <input
+              type="text"
+              placeholder="Search menu items"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              onKeyDown={(e) =>
+                e.key === "Enter" &&
+                setFilteredMenu(
+                  resMenu.menu.filter((food) =>
+                    food.name.toLowerCase().includes(searchTerm.toLowerCase())
+                  )
                 )
-              )
-            }
-          />
-          <button
-            onClick={() =>
-              setFilteredMenu(
-                resMenu.menu.filter((food) =>
-                  food.name.toLowerCase().includes(searchTerm.toLowerCase())
+              }
+            />
+            <button
+              onClick={() =>
+                setFilteredMenu(
+                  resMenu.menu.filter((food) =>
+                    food.name.toLowerCase().includes(searchTerm.toLowerCase())
+                  )
                 )
-              )
-            }
-            className={classes.searchButton}
-          >
-            Search
-          </button>
+              }
+              className={classes.searchButton}
+            >
+              Search
+            </button>
+          </div>
+          {screenWidth <= 1300 && (
+            <div className={classes.buttonContainer}>
+              <button
+                className={classes.coolButton}
+                onClick={handleButtonClick}
+              >
+                Recommendation for Today!!
+              </button>
+              <button
+                className={classes.BudgetFiltering}
+                onClick={handleBudgetFilterButtonClick}
+              >
+                Budget Filter
+              </button>
+            </div>
+          )}
         </div>
         <div
           className={classes.Tagscontainer}
@@ -296,84 +338,148 @@ export default function MenuPage({ margin }) {
       </section>
 
       {/* Display Single Recommendation with Budget Range inside */}
-      <div className={classes.recommendationContainer}>
-        {recommendedItems.length > 0 ? (
-          <>
-            <h3>Recommended for You</h3>
-            <div className={classes.singleRecommendation}>
-              <article className={classes.menuItem}>
-                <img
-                  src={recommendedItems[0].menuImageUrl}
-                  alt={recommendedItems[0].name}
-                  className={classes.imgClass}
-                />
-                <div className={classes.itemsInfo}>
-                  <header>
-                    <h4>{recommendedItems[0].name}</h4>
-                    <h4 className={classes.price}>
-                      RS {recommendedItems[0].price}
-                    </h4>
-                  </header>
-                  <p className={classes.itemText}>
-                    {recommendedItems[0].details}
-                  </p>
-                  <button onClick={() => handleAddToCart(recommendedItems[0])}>
-                    Add to cart
-                  </button>
-                </div>
-              </article>
-            </div>
-          </>
-        ) : (
-          <div></div>
-        )}
+      {screenWidth >= 1300 && (
+        <div className={classes.recommendationContainer}>
+          {recommendedItems.length > 0 ? (
+            <>
+              <h3>Recommended for You</h3>
+              <div className={classes.singleRecommendation}>
+                <article className={classes.menuItem}>
+                  <img
+                    src={recommendedItems[0].menuImageUrl}
+                    alt={recommendedItems[0].name}
+                    className={classes.imgClass}
+                  />
+                  <div className={classes.itemsInfo}>
+                    <header>
+                      <h4>{recommendedItems[0].name}</h4>
+                      <h4 className={classes.price}>
+                        RS {recommendedItems[0].price}
+                      </h4>
+                    </header>
+                    <p className={classes.itemText}>
+                      {recommendedItems[0].details}
+                    </p>
+                    <button
+                      onClick={() => handleAddToCart(recommendedItems[0])}
+                    >
+                      Add to cart
+                    </button>
+                  </div>
+                </article>
+              </div>
+            </>
+          ) : (
+            <div></div>
+          )}
 
-        {/* Nested Budget Range inside Recommendation */}
-        <aside className={classes.budgetFilterContainerInsideRecommendation}>
-          <h4>Budget Range</h4> {/* Changed to h4 for semantic structuring */}
+          {/* Nested Budget Range inside Recommendation */}
+          <aside className={classes.budgetFilterContainerInsideRecommendation}>
+            <h4>Budget Range</h4> {/* Changed to h4 for semantic structuring */}
+            {Object.keys(selectedBudgetRanges).map((range) => (
+              <div key={range}>
+                <input
+                  type="checkbox"
+                  id={`inside-${range}`} // Changed to avoid duplicate IDs
+                  checked={selectedBudgetRanges[range]}
+                  onChange={() => {
+                    handleBudgetRangeChange(range);
+                    setIsModalVisible(false);
+                  }}
+                />
+                <label htmlFor={`inside-${range}`}>{range}</label>
+              </div>
+            ))}
+          </aside>
+        </div>
+      )}
+
+      <Modal
+        title="Recommended for You"
+        open={isModalVisible}
+        onCancel={() => setIsModalVisible(false)}
+        footer={null}
+        className={classes.modalContainer} // Apply custom class for modal styling
+      >
+        {recommendedItems.length > 0 ? (
+          <div className={classes.singleRecommendation}>
+            <article className={classes.menuItem}>
+              <img
+                src={recommendedItems[0].menuImageUrl}
+                alt={recommendedItems[0].name}
+                className={classes.imgClass}
+              />
+              <div className={classes.itemsInfo}>
+                <header>
+                  <h4 className={classes.itemName}>
+                    {recommendedItems[0].name}
+                  </h4>
+                  <h4 className={classes.itemPrice}>
+                    RS {recommendedItems[0].price}
+                  </h4>
+                </header>
+                <p className={classes.itemDescription}>
+                  {recommendedItems[0].details}
+                </p>
+                <button
+                  onClick={() => handleAddToCart(recommendedItems[0])}
+                  className={classes.addToCartButton}
+                >
+                  Add to Cart
+                </button>
+              </div>
+            </article>
+          </div>
+        ) : (
+          <div>No recommendations available</div>
+        )}
+      </Modal>
+
+      <Modal
+        title="Select Budget Range"
+        open={isBudgetFilterModalVisible}
+        onCancel={(e) => {
+          if (!e.target.tagName.toLowerCase().includes("input")) {
+            setIsBudgetFilterModalVisible(false);
+          }
+        }}
+        footer={[
+          <div
+            key="centeredButton"
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              marginTop: "-40px",
+            }}
+          >
+            <Button
+              key="ok"
+              type="primary"
+              onClick={() => setIsBudgetFilterModalVisible(false)}
+            >
+              OK
+            </Button>
+          </div>,
+        ]}
+        width={300}
+      >
+        <aside
+          className={classes.budgetFilterContainerInsideRecommendationModel}
+        >
           {Object.keys(selectedBudgetRanges).map((range) => (
             <div key={range}>
               <input
                 type="checkbox"
-                id={`inside-${range}`} // Changed to avoid duplicate IDs
+                id={`inside-${range}`}
                 checked={selectedBudgetRanges[range]}
                 onChange={() => {
                   handleBudgetRangeChange(range);
-                  setIsModalVisible(false);
                 }}
               />
               <label htmlFor={`inside-${range}`}>{range}</label>
             </div>
           ))}
         </aside>
-      </div>
-      <Button
-        className={classes.showFilterButton}
-        onClick={() => setIsModalVisible(true)}
-      >
-        Show Budget Filter
-      </Button>
-      <Modal
-        title="Budget Range"
-        visible={isModalVisible}
-        onOk={() => setIsModalVisible(false)}
-        onCancel={() => setIsModalVisible(false)}
-        footer={null} // Remove default buttons
-      >
-        {Object.keys(selectedBudgetRanges).map((range) => (
-          <div key={range}>
-            <input
-              type="checkbox"
-              id={range}
-              checked={selectedBudgetRanges[range]}
-              onChange={() => {
-                handleBudgetRangeChange(range);
-                setIsModalVisible(false); // Close modal when a range is selected
-              }}
-            />
-            <label htmlFor={range}>{range}</label>
-          </div>
-        ))}
       </Modal>
     </div>
   );

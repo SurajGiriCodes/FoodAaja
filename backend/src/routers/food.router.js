@@ -5,6 +5,7 @@ import handler from "express-async-handler";
 import mongoose from "mongoose";
 
 const router = Router();
+
 router.get("/searchFoodItems", async (req, res) => {
   try {
     // Retrieve search term and price range from query parameters

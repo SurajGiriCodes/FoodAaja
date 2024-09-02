@@ -11,10 +11,11 @@ export const dbconnect = async () => {
     await connect(process.env.MONGO_URI, {
       serverSelectionTimeoutMS: 30000,
       socketTimeoutMS: 30000,
+      dbName: "FoodProject",
     });
     await seedUsers();
 
-    console.log("connect successfilly---");
+    console.log("connect database successfilly---");
   } catch (error) {
     console.log(error);
   }
@@ -23,7 +24,6 @@ export const dbconnect = async () => {
 async function seedUsers() {
   const usersCount = await UserModel.countDocuments(); //counts the number of documents (users) in a database
   if (usersCount > 0) {
-    console.log("Users seed is already done!");
     return;
   }
 

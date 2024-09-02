@@ -4,6 +4,7 @@ import { useCart } from "../../hooks/useCart";
 import classes from "./header.module.css";
 import { useAuth } from "../../hooks/useAuth";
 import { Layout, Menu } from "antd";
+import logo from "../../images/logo.png";
 const { Header: AntHeader } = Layout;
 
 function AdminHeader() {
@@ -33,7 +34,9 @@ function AdminHeader() {
         }}
       >
         <div className={classes.logo} style={{ float: "left" }}>
-          <h2 style={{ fontSize: "18px" }}>FOODAAJA</h2>
+          <h2>
+            <img src={logo} style={{ width: "100px", height: "auto" }} />
+          </h2>
         </div>
         <Menu
           mode="horizontal"
@@ -67,8 +70,14 @@ function AdminHeader() {
 export default function AppHeader() {
   const { cart } = useCart();
   const { user, logout } = useAuth();
+  const { clearCart } = useCart();
 
   const isAdmin = user && user.isAdmin;
+
+  const handleLogout = () => {
+    clearCart();
+    logout();
+  };
 
   return (
     <Layout>
@@ -88,7 +97,7 @@ export default function AppHeader() {
                     <div className={classes.menu}>
                       <Link to="/profile">Profile</Link>
                       <Link to="/orders">Orders</Link>
-                      <a onClick={logout}>Logout</a>
+                      <a onClick={handleLogout}>Logout</a>
                     </div>
                   </li>
                 ) : (
