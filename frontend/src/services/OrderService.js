@@ -25,25 +25,6 @@ export const initiatePayment = async (paymentDetails) => {
   }
 };
 
-// export const lookupPaymentStatus = async (orderId) => {
-//   try {
-//     const response = await axios.post(
-//       "/epayment/lookup/",
-//       { orderId },
-//       {
-//         headers: {
-//           Authorization: "Key d9d1a73af4364a73921020e145409c24",
-//           "Content-Type": "application/json",
-//         },
-//       }
-//     );
-//     return response.data;
-//   } catch (error) {
-//     console.error("Error looking up payment status:", error);
-//     throw error;
-//   }
-// };
-
 export const pay = async (paymentId) => {
   try {
     const { data } = await axios.put("/api/orders/pay", { paymentId });
@@ -102,6 +83,7 @@ export const getAllOrdersAdmin = async () => {
 };
 
 export const getUserOrders = async (userId) => {
+  console.log(userId);
   try {
     const { data } = await axios.get(`/api/orders/delivered-orders/${userId}`);
     return data;

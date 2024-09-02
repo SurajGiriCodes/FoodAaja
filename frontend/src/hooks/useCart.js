@@ -73,7 +73,7 @@ export default function CartProvider({ children }) {
     );
   };
 
-  //This function allows users to add items to their cart
+  //This function allows users to add food items to their cart
   const addToCart = (food) => {
     const cartItem = cartItems.find((item) => item.food._id === food._id);
     if (cartItem) {

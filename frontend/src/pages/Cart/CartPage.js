@@ -4,22 +4,15 @@ import Title from "../../Component/Title/Title";
 import classes from "./cartPage.module.css";
 import { Link } from "react-router-dom";
 import { useState } from "react"; // Import useState
-import {
-  Modal,
-  Button,
-  Input,
-  Checkbox,
-  List,
-  Row,
-  Col,
-  InputNumber,
-} from "antd"; // Import Row and Col for layout
+import { Modal, Button, Input, Checkbox, Row, Col } from "antd"; // Import Row and Col for layout
+import { useNavigate } from "react-router-dom";
 
 export default function CartPage() {
   const { cart, removeFromCart, changeQuantity } = useCart();
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [currentItem, setCurrentItem] = useState(null);
   const [customizations, setCustomizations] = useState([]);
+  const navigate = useNavigate();
 
   const showModal = (item) => {
     setCurrentItem(item);
@@ -59,7 +52,8 @@ export default function CartPage() {
         marginTop="20px"
         marginBottom="20px"
       />
-      {cart && cart.items.length > 0 && (
+
+      {cart && cart.items.length > 0 ? (
         <div className={classes.container}>
           <ul className={classes.list}>
             {cart.items.map((item) => (
@@ -121,6 +115,43 @@ export default function CartPage() {
             </div>
             <Link to="/checkout">Proceed To Checkout</Link>
           </div>
+        </div>
+      ) : (
+        <div
+          className={classes.emptyCartMessage}
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            alignItems: "center",
+            fontSize: "1.5rem",
+            fontWeight: 100,
+            height: "15rem",
+          }}
+        >
+          <p>Cart Page Is Empty!</p>
+          <button
+            onClick={() => navigate("/")}
+            style={{
+              fontSize: "1rem",
+              backgroundColor: "#007FFF",
+              color: "white",
+              borderRadius: "10rem",
+              padding: "0.7rem 1rem",
+              margin: "1rem",
+              opacity: 0.8,
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.opacity = 1;
+              e.currentTarget.style.cursor = "pointer";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.opacity = 0.8;
+              e.currentTarget.style.cursor = "default";
+            }}
+          >
+            Go To Home Page
+          </button>
         </div>
       )}
       <Modal

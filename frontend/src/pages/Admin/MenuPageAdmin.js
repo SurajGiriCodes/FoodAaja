@@ -18,6 +18,8 @@ export default function MenuPageAdmin() {
   const [selectedFood, setSelectedFood] = useState(null);
   const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
   const [deleteFoodId, setDeleteFoodId] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     console.log("Restaurant ID:", restaurantId);
@@ -121,6 +123,26 @@ export default function MenuPageAdmin() {
     }
   };
 
+  const handleSearchChange = (event) => {
+    setSearchTerm(event.target.value);
+  };
+
+  const handleSearchSubmit = () => {
+    setSearchQuery(searchTerm);
+  };
+
+  const handleKeyDown = (event) => {
+    if (event.key === "Enter") {
+      document.getElementById("searchButton").click();
+    }
+  };
+
+  const filteredMenu = resmenu.menu
+    ? resmenu.menu.filter((food) =>
+        food.name.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+    : [];
+
   return (
     <>
       <div>
@@ -131,14 +153,33 @@ export default function MenuPageAdmin() {
                 Add Food
               </Button>
             </div>
+
             <section>
               <div className={classes.title} style={{ marginBottom: "80px" }}>
                 <h1 className={classes.restrurent}>{resmenu.name}</h1>
                 <h2 className={classes.menuTitle}>Menu</h2>
                 <div className={classes.underline}></div>
               </div>
+              <div style={styles.container}>
+                <input
+                  type="text"
+                  placeholder="Search menu items..."
+                  value={searchTerm}
+                  onChange={handleSearchChange}
+                  onKeyDown={handleKeyDown}
+                  style={styles.searchInput}
+                />
+                <button
+                  type="button"
+                  onClick={handleSearchSubmit}
+                  style={styles.searchButton}
+                  id="searchButton"
+                >
+                  Search
+                </button>
+              </div>
               <div className={classes["section-center"]}>
-                {resmenu.menu.map((food) => (
+                {filteredMenu?.map((food) => (
                   <article key={food._id} className={classes["menu-item"]}>
                     <img
                       src={`${food.menuImageUrl}`}
@@ -156,14 +197,14 @@ export default function MenuPageAdmin() {
                           type="primary"
                           danger
                           onClick={() => showDeleteModal(food._id)}
-                          style={{ flex: 1, marginRight: "5px" }} // Added inline style here
+                          style={{ flex: 1, marginRight: "5px" }}
                         >
                           Delete
                         </Button>
                         <Button
                           type="primary"
                           onClick={() => showEditModal(food)}
-                          style={{ flex: 1 }} // Added inline style here
+                          style={{ flex: 1 }}
                         >
                           Edit
                         </Button>
@@ -327,3 +368,56 @@ export default function MenuPageAdmin() {
     </>
   );
 }
+
+const styles = {
+  container: {
+    display: "flex",
+    justifyContent: "center",
+    marginTop: "-1rem",
+    marginBottom: "2rem",
+
+    "@media screen and (max-width: 1200px)": {
+      marginLeft: "20px",
+    },
+  },
+  searchInput: {
+    borderRadius: "10rem 0 0 10rem",
+    border: "none",
+    height: "2rem",
+    width: "20rem",
+    backgroundColor: "#f1f1f1",
+    padding: "1.2rem",
+    fontSize: "1rem",
+    fontWeight: "500",
+    outline: "none",
+    "@media screen and (max-width: 600px)": {
+      width: "15rem",
+    },
+  },
+  searchButton: {
+    color: "grey",
+    height: "2.5rem",
+    width: "5rem",
+    fontSize: "1rem",
+    borderRadius: "0 10rem 10rem 0",
+    border: "none",
+    backgroundColor: "#FF4500",
+    color: "white",
+    opacity: "0.8",
+    outline: "none",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    cursor: "pointer",
+    marginTop: "-1px",
+    marginLeft: "-2px",
+    "@media screen and (max-width: 600px)": {
+      width: "4rem",
+      padding: "3px 8px",
+      fontSize: "0.8rem",
+    },
+  },
+  searchIcon: {
+    marginRight: "6px",
+  },
+};

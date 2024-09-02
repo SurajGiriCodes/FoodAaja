@@ -47,7 +47,7 @@ export default function PaymentPage() {
       toast.success("Order Saved Successfully", "Success");
     } catch (error) {
       console.error("Error processing cash on delivery:", error);
-      alert("Failed to process cash on delivery."); // Placeholder for actual error handling
+      alert("Failed to process cash on delivery.");
     }
   };
 
@@ -90,7 +90,7 @@ export default function PaymentPage() {
           <div className={classes.buttons}>
             <Button
               type="primary"
-              onClick={handlePayment} // Add the click handler here
+              onClick={handlePayment}
               style={{
                 width: "300px",
                 height: "50px",
@@ -101,14 +101,14 @@ export default function PaymentPage() {
             </Button>
             <Button
               type="secondary"
-              onClick={handlePayOnDelivery} // This will be your new handler for pay on delivery
+              onClick={handlePayOnDelivery}
               style={{
                 width: "300px",
                 height: "50px",
                 fontSize: "20px",
-                backgroundColor: "#f0ad4e", // Example: orange background
-                color: "#ffffff", // white text
-                borderColor: "#eea236", // Example: darker orange border
+                backgroundColor: "#f0ad4e",
+                color: "#ffffff",
+                borderColor: "#eea236",
               }}
             >
               Cash on Delivery

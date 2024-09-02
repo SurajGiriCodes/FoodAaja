@@ -53,9 +53,6 @@ export default function Thumbnails({ restaurant }) {
           const averageRating = totalRating / items.length;
           restaurantRatings[restaurantId] = averageRating;
         }
-
-        console.log(restaurantRatings);
-
         await updateRestaurantRatings(restaurantRatings);
       } catch (error) {
         console.error("Error fetching orders:", error);
@@ -78,6 +75,7 @@ export default function Thumbnails({ restaurant }) {
         const response = await getUserOrders(userId);
         const mostRecentOrder = response[0];
         console.log(mostRecentOrder);
+
         if (mostRecentOrder) {
           setRecentOrder(mostRecentOrder);
           setModalVisible(true);
@@ -109,18 +107,13 @@ export default function Thumbnails({ restaurant }) {
         foodItemId: item.food._id,
         rating: ratings[item.food._id],
       }));
-
-      // Send ratings data to backend
       await submitRatingsToBackend(ratingsWithOrderAndFoodId);
-
       setModalVisible(false);
-
-      // Optionally, provide feedback to the user
     } catch (error) {
       console.error("Failed to submit ratings:", error);
-      // Handle error
     }
   };
+
   return (
     <>
       <div className={classes.container}>
@@ -128,15 +121,6 @@ export default function Thumbnails({ restaurant }) {
           className={classes.background}
           style={{
             backgroundImage: `url(${backgroundImage})`,
-            position: "fixed",
-            top: 0,
-            left: 0,
-            width: "100%",
-            height: "100%",
-            zIndex: -1,
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-            opacity: 0.5,
           }}
         ></div>
         <ul className={classes.list}>
@@ -187,85 +171,92 @@ export default function Thumbnails({ restaurant }) {
             Submit
           </Button>,
         ]}
-        style={{ textAlign: "center" }} // Apply inline CSS for centering the modal content
+        style={{ textAlign: "center" }}
       >
-        {recentOrder && (
-          <div style={{ textAlign: "left" }}>
-            <ul style={{ listStyleType: "none", padding: 0 }}>
-              {recentOrder.items.map((item) => {
-                const orderedRestaurant = restaurant.find(
-                  (rest) => rest.id === item.food.restaurantId
-                );
+        <div>
+          {recentOrder && (
+            <div
+              style={{ textAlign: "left" }}
+              className={classes.orderRatingContainer}
+            >
+              <ul style={{ listStyleType: "none", padding: 0 }}>
+                {recentOrder.items.map((item) => {
+                  const orderedRestaurant = restaurant.find(
+                    (rest) => rest.id === item.food.restaurantId
+                  );
 
-                return (
-                  <li key={item.food._id} style={{ marginBottom: "10px" }}>
-                    <div>
-                      <div
-                        style={{
-                          display: "flex",
-                          flexDirection: "row",
-                          alignItems: "center",
-                        }}
-                      >
+                  return (
+                    <li key={item.food._id} style={{ marginBottom: "10px" }}>
+                      <div>
                         <div
                           style={{
                             display: "flex",
-                            flexDirection: "column",
-                            alignItems: "flex-start",
-                            flex: 1, // Occupy remaining space
+                            flexDirection: "row",
+                            alignItems: "center",
                           }}
                         >
                           <div
                             style={{
                               display: "flex",
-                              flexDirection: "row",
-                              marginBottom: "5px",
+                              flexDirection: "column",
+                              alignItems: "flex-start",
+                              flex: 1,
                             }}
                           >
-                            <span
+                            <div
                               style={{
-                                fontWeight: "bold",
-                                marginRight: "10px",
+                                display: "flex",
+                                flexDirection: "row",
+                                marginBottom: "5px",
                               }}
                             >
-                              Food Item:
-                            </span>
-                            <span>{item.food.name}</span>
-                          </div>
-                          <div
-                            style={{ display: "flex", flexDirection: "row" }}
-                          >
-                            <span
-                              style={{
-                                fontWeight: "bold",
-                                marginRight: "10px",
-                              }}
+                              <span
+                                style={{
+                                  fontWeight: "bold",
+                                  marginRight: "10px",
+                                }}
+                              >
+                                Food Item:
+                              </span>
+                              <span>{item.food.name}</span>
+                            </div>
+                            <div
+                              style={{ display: "flex", flexDirection: "row" }}
                             >
-                              Restaurant:
-                            </span>
-                            <span>
-                              {orderedRestaurant ? orderedRestaurant.name : ""}
-                            </span>
+                              <span
+                                style={{
+                                  fontWeight: "bold",
+                                  marginRight: "10px",
+                                }}
+                              >
+                                Restaurant:
+                              </span>
+                              <span>
+                                {orderedRestaurant
+                                  ? orderedRestaurant.name
+                                  : ""}
+                              </span>
+                            </div>
                           </div>
-                        </div>
 
-                        <div style={{ marginLeft: "10px" }}>
-                          <Rate
-                            allowHalf
-                            defaultValue={0}
-                            onChange={(rating) =>
-                              handleRatingChange(item.food._id, rating)
-                            }
-                          />
+                          <div style={{ marginLeft: "10px" }}>
+                            <Rate
+                              allowHalf
+                              defaultValue={0}
+                              onChange={(rating) =>
+                                handleRatingChange(item.food._id, rating)
+                              }
+                            />
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </li>
-                );
-              })}
-            </ul>
-          </div>
-        )}
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+          )}
+        </div>
       </Modal>
     </>
   );
