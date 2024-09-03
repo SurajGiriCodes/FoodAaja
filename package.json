@@ -1,19 +1,14 @@
 {
   "name": "foodaaja",
   "version": "1.0.0",
-  "description": "",
+  "description": "MONGO_URI=\"your link\"",
   "main": "index.js",
-  "devDependencies": {},
   "scripts": {
     "start": "cd backend && npm start",
-    "prebuild": "cd backend && npm install && cd ../frontend && npm install",
     "build": "cd frontend && npm run build",
-    "postbuild": "shx mv -f frontend/build backend/src/public"
+    "postbuild": "move frontend\\build backend\\src\\public"
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
-  "engines": {
-    "node": ">=18 <19"
-  }
+  "license": "ISC"
 }
