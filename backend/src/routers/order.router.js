@@ -60,7 +60,7 @@ router.post(
   auth,
   handler(async (req, res) => {
     const { amount, orderId, CustomerName } = req.body;
-    const returnUrl = `https://foodaaja-react-js-er6a.onrender.com//track/${orderId}`;
+    const returnUrl = `https://foodaaja-react-js-er6a.onrender.com/track/${orderId}`;
 
     const data = {
       return_url: returnUrl,
